@@ -3,7 +3,6 @@
 
 /*
 *        Author  @linxiaoye
-*        Date    2017.2.27
 */
 
 #include <cstdlib>
@@ -47,7 +46,7 @@ namespace TinySTL {
 		static void* refill(size_t n);
 		// 配置一大块空间，可容纳nobjs个大小为size的区块
 		// 如果配置nobjs个区块有所不便，nobjs可能会降低
-		static char* chunk_allco(size_t size, size_t &nobjs); 
+		static char* chunk_alloc(size_t size, size_t &nobjs); 
 	
 	public:
 		static void* allocate(size_t bytes);
