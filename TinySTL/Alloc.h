@@ -54,4 +54,5 @@ namespace TinySTL {
 		static void* reallocate(void* ptr, size_t old_sz, size_t new_sz);
 	};  	
 }
-#endif
+
+#endif   // _ALLOC_H_

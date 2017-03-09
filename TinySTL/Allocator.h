@@ -84,4 +84,4 @@ namespace TinySTL{
 	
 }
 
-#endif
+#endif  // _ALLOCATOR_H_
