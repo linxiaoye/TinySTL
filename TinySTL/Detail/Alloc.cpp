@@ -120,7 +120,7 @@ namespace TinySTL {
 			return chunk_alloc(bytes, nobjs);  // 递归调用自身， 修正nobjs 
 		} 
 	} 	
-}
+}   // namespace TinySTL
 
 
 
