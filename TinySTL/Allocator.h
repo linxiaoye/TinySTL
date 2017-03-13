@@ -3,7 +3,6 @@
 
 /*
 *     Author  @linxiaoye
-*     Date    2017.2.27
 */
 
 #include "Alloc.h"
