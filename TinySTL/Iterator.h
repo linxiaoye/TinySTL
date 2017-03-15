@@ -75,7 +75,7 @@ namespace TinySTL {
 		typedef typename I::pointer             pointer;
 		typedef typename I::reference           reference;
 	};
-	template<class T>          /* 针对原生指针的特化版本 */
+	template<class T>            /* 针对原生指针的特化版本 */
 	struct iterator_traits<T*> {
 		typedef random_access_iterator_tag  iterator_category;
 		typedef T                           value_type;

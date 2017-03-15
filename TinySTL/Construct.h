@@ -7,7 +7,7 @@
 
 #include <new>
 
-//#include "TypeTraits.h"
+#include "TypeTraits.h"
 
 namespace TinySTL {
 	
@@ -34,7 +34,7 @@ namespace TinySTL {
 	template<class ForwardIterator>
 	inline void destory(ForwardIterator first, ForwardIterator last) {
 		typedef typename _type_traits<ForwardIterator>::is_POD_type is_POD_type;
-		_destroy(first, last, is_POD_type);
+		_destroy(first, last, is_POD_type());
 	}	
 }   // namespace TinySTL
 
