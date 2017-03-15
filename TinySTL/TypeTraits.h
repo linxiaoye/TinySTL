@@ -7,7 +7,6 @@
 
 namespace TinySTL {
 	
-	/*  这一段。。。？？ 暂时不是特别懂 */
 	namespace {
 		template<bool, class T1, class T2>
 		struct IfThenElse;
