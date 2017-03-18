@@ -31,7 +31,7 @@ namespace TinySTL {
 	template<class InputIterator>              // 需要区别实参是两个数字还是两个迭代器 
 	vector<T, Alloc>::vector(InputIterator first, InputIterator last)
 	{
-		vector_aux(first, last, std::is_integral<InputIterator>::type()); 
+		vector_aux(first, last, typename std::is_integral<InputIterator>::type()); 
 	}
 	template<class T, class Alloc>
 	template<class InputIterator>	            // 如果不是数字的话 
@@ -81,7 +81,7 @@ namespace TinySTL {
 	template<class T, class Alloc>
 	vector<T, Alloc>::~vector()
 	{
-		destroy_and_deallacate_all(*this);
+		clear();
 	}
 
  	/*****************比较操作相关函数 ***************************/
@@ -182,7 +182,7 @@ namespace TinySTL {
 	template<class T, class Alloc>
 	auto vector<T, Alloc>::insert(iterator pos, const value_type& val) -> iterator
 	{
-		if (end() != capacity())
+		if (size() != capacity())
 		{
 			insert(pos, 1, val);
 			return pos;
@@ -242,13 +242,13 @@ namespace TinySTL {
 	template<class InputIterator>     // 需要判断InputIterator是不是数字 
 	void vector<T, Alloc>::insert(iterator pos, InputIterator first, InputIterator last)
 	{
-		insert_aux(pos, first, last, std::is_integral<InputIterator>::type());
+		insert_aux(pos, first, last, typename std::is_integral<InputIterator>::type());
 	}
 	template<class T, class Alloc>
 	template<class InputIterator>
 	void vector<T, Alloc>::insert_aux(iterator pos, InputIterator n, InputIterator val, std::true_type)
 	{
-		insert_aux(pos, n, val);
+		insert(pos, n, val);
 	}
 	template<class T, class Alloc>
 	template<class InputIterator>

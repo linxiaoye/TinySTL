@@ -53,7 +53,7 @@ namespace TinySTL {
 		
 		if (nobjs == 1) {                     // 当取出来的内存仅够一个对象使用 
 			return chunk;                     // 那直接返回给客端，也不需要管理多余的取出来的空间（因为并没有多的） 
-		} 
+		}
 	 	else {                                // 如果取出来的区块数量大于1，那就需要将剩余的区块放到freelist中管理起来 
 	 		my_free_list = free_list + FREELIST_INDEX(bytes);
 	 		result = (obj* )(chunk);          // 要返回给客端的1个区块 

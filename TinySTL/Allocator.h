@@ -53,12 +53,12 @@ namespace TinySTL{
 	}
 	template<typename T>
 	void allocator<T>::deallocate(pointer ptr) {
-		alloc::deallocate(static_cast<void* >(ptr), sizeof(T));
+		alloc::deallocate(static_cast<void*>(ptr), sizeof(T));
 	}
 	template<typename T>
 	void allocator<T>::deallocate(pointer ptr, size_type n) {
 		if (n == 0) return;
-		alloc::deallocate(static_cast<void* >(ptr), sizeof(T) * n);
+		alloc::deallocate(static_cast<void*>(ptr), sizeof(T) * n);
 	}
 	
 	
