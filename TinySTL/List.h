@@ -1,0 +1,155 @@
+#ifndef _LIST_H_
+#define _LIST_H_
+
+/*
+*		Author  @linxiaoye
+*/
+
+#include "Allocator.h"
+#include "Construct.h"
+#include "Uninitialized.h"
+#include "Iterator.h"
+#include "TypeTraits.h"
+
+
+namespace TinySTL 
+{
+	
+	template<class T>
+	class list;            // 先声明list类 
+	
+	/*********************[node class]************************************/
+	template <class T>
+	struct node 
+	{
+		T data;
+		node* prev;
+		node* next;
+		list<T>* container;
+		
+		node(const T& d, node* p, node* n, list<T>* c):
+				data(d), prev(p), next(n), container(c) { }
+		bool operator == (const node& n)
+		{
+			return (data == n.data) && (prev == n.prev) && (next == n.next) && (container == n.container);
+		}
+	};     // end of struct node
+	
+	/*********************[list_iterator class]*******************************/
+	template<class T>
+	struct list_iterator: public iterator<bidirectional_iterator_tag, T>
+	{
+		template<T>                        // 表示只有参数同为T时，这个list才是对应list_iterator的友元类 
+		friend class list;                 //  list 可以访问 list_iterator的所有成员 
+		
+		public:
+			typedef node<T>* node_ptr;
+			node_ptr p;                    // list_iterator的数据成员，一个指向node的指针 
+		public:
+			explicit list_iterator(node_ptr ptr = nullptr) : p(ptr) { }
+			
+			inline list_iterator& operator ++ ();    // 前置++ 
+			inline list_iterator operator ++ (int);  // 后置++ 
+			inline list_iterator& operator -- ();
+			inline list_iterator operator -- (int);
+			
+			T& operator * () { return (*p).data;}
+			T* operator -> () { return &(operator*()); }  // 标准做法 
+			
+			template<class T1>
+			friend bool operator == (const list_iterator<T1>& lhs, const list_iterator<T1>& rhs);
+			template<class T1>
+			friend bool operator == (const list_iterator<T1>& lhs, const list_iterator<T1>& rhs);
+	
+	};  // end of class list_iteraetor
+	
+	/*********************[list_iterator class]*******************************/
+	template<class T>
+	class list {
+		template<class T>
+		friend struct list_iterator;
+		
+	private:
+		typedef allocator<node<T>>   	 node_allocator;
+		typedef node<T>*              	 node_ptr;
+	public:
+		typedef T                        value_type;
+		typedef list_iterator<T>         iterator;
+		typedef list_iterator<const T>   const_iterator;
+		typedef T&                       reference;
+		typedef const T&                 const_reference;
+		typedef size_t                   size_type;
+		typedef ptrdiff_t                different_type;
+	private:
+		node_ptr head;
+		node_ptr tail;
+	public:
+		list();
+		explicit list(size_type n, const value_type& val = value_type());
+		template<class InputIterator>
+		list(InputIterator first, InputIterator last);
+		list(const list& l);
+		list& operator = (const list& rhs);
+		~list();
+
+		bool empty() { return head == tail; }
+		size_type size();
+		reference front() { return head->data; }
+		reference back() { return tail->prev->data; }
+		
+		iterator begin();
+		iterator end();
+		const_iterator begin() const;
+		const_iterator end() const;
+		
+		void push_back(const value_type& val);
+		void pop_back();
+		void push_front(const value_type& val);
+		void pop_front();
+		
+		iterator insert(iterator pos, const value_type& val);
+		void insert(iterator pos, size_type n, const value_type& val);
+		template<class InputIterator>
+		void insert(iterator pos, InputIterator first, InputIterator last);
+		
+		iterator erase(iterator pos);
+		iterator erase(iterator first, iterator last);
+		void clear();
+		void swap(list& rhs);
+		void splice(iterator pos, list& x);
+		void splice(iterator pos, list& x, iterator i);
+		void splice(iterator pos, list& x, iterator first, iterator last);
+		void remove(const value_type& val);
+		template<class Predicate>
+		void remove_if(Predicate pred);
+		void unique();
+		template<class BinaryPredicate>
+		void unique(BinaryPredicate binary_pred);
+		void merge(list& x);
+		template<class Compare>
+		void merge(list& x, Compare comp);
+		void sort();
+		template<class Compare>
+		void sort(Compare comp);
+		void reserve();
+		/**   tool functions  **/ 
+	private:        
+	
+	
+	public:
+		template<class T>
+		friend void swap(list<T>& lhs, list<T>& rhs);
+		template<class T>
+		friend bool operator == (const list<T>& lhs, const list<T>& rhs);
+		template<class T>
+		friend bool operator != (const list<T>& lhs, const list<T>& rhs);
+		
+	
+	};   // end of class list
+	
+	
+}  // namespace TinySTL
+
+
+
+#endif  // _LIST_H_
