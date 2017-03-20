@@ -13,7 +13,7 @@ namespace TinySTL {
 	alloc::obj* alloc::free_list[alloc::ENFreelists::NFREELISTS]
 		= { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	
-	void* alloc::allocate(size_t bytes) {
+	void* alloc::_allocate(size_t bytes) {
 		if (bytes > EMaxbytes::MAXBYTES) {    // 如果需要分配的空间大于128bytes 
 			return malloc(bytes);             // 则直接使用第一级配置器malloc分配 
 		}                                     //  若需要分配的空间小于128bytes 
@@ -27,7 +27,7 @@ namespace TinySTL {
 			return refill(ROUND_UP(bytes));   // 则重新填充freelist 
 		}
 	}
-	void alloc::deallocate(void *ptr, size_t bytes) {
+	void alloc::_deallocate(void *ptr, size_t bytes) {
 		if (bytes > EMaxbytes::MAXBYTES) {    // 如果大于128bytes，则使用free直接回收空间 
 			free(ptr);
 		}
@@ -38,7 +38,7 @@ namespace TinySTL {
 			free_list[index] = node;
 		}
 	} 
-	void* alloc::reallocate(void* ptr, size_t old_sz, size_t new_sz) {
+	void* alloc::_reallocate(void* ptr, size_t old_sz, size_t new_sz) {
 		deallocate(ptr, old_sz);
 		ptr = allocate(new_sz);
 		return ptr;

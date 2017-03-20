@@ -8,6 +8,7 @@
 #include <cstdlib>
 
 namespace TinySTL {
+	using std::size_t;
 	
 /*
 *     次级空间配置器，仅用于给Allocator提供部分接口 
@@ -49,9 +50,9 @@ namespace TinySTL {
 		static char* chunk_alloc(size_t size, size_t &nobjs); 
 	
 	public:
-		static void* allocate(size_t bytes);
-		static void deallocate(void* ptr, size_t bytes);
-		static void* reallocate(void* ptr, size_t old_sz, size_t new_sz);
+		static void* _allocate(size_t bytes);
+		static void _deallocate(void* ptr, size_t bytes);
+		static void* _reallocate(void* ptr, size_t old_sz, size_t new_sz);
 	};  	
 }  // namespace TinySTL
 

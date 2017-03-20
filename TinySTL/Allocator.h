@@ -5,11 +5,13 @@
 *     Author  @linxiaoye
 */
 
+#include <cassert>
+#include <new>
+
 #include "Alloc.h"
 #include "Construct.h"
 
-#include <cassert>
-#include <new>
+
 
 namespace TinySTL{
 	
@@ -44,21 +46,21 @@ namespace TinySTL{
 	
 	template<typename T>
     auto allocator<T>::allocate() -> pointer {
-		return static_cast<pointer>(alloc::allocate(sizeof(T)));
+		return static_cast<pointer>(alloc::_allocate(sizeof(T)));
 	}
 	template<typename T>
-	auto allocator<T>::allocate(size_type n) -> pointer {
+	T* allocator<T>::allocate(size_type n) {
 		if (n == 0) return 0;
-		return static_cast<pointer>(alloc::allocate(sizeof(T) * n));
+		return static_cast<pointer>(alloc::_allocate(sizeof(T) * n));
 	}
 	template<typename T>
 	void allocator<T>::deallocate(pointer ptr) {
-		alloc::deallocate(static_cast<void*>(ptr), sizeof(T));
+		alloc::_deallocate(static_cast<void*>(ptr), sizeof(T));
 	}
 	template<typename T>
 	void allocator<T>::deallocate(pointer ptr, size_type n) {
 		if (n == 0) return;
-		alloc::deallocate(static_cast<void*>(ptr), sizeof(T) * n);
+		alloc::_deallocate(static_cast<void*>(ptr), sizeof(T) * n);
 	}
 	
 	

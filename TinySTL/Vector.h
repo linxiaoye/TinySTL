@@ -10,8 +10,9 @@
 #include "Construct.h"
 #include "Iterator.h"
 #include "TypeTraits.h"
-#include "Uninitialized.h"
 #include "Algorithm.h"
+#include "Uninitialized.h"
+
 
 namespace TinySTL 
 {

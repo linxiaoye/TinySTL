@@ -1,12 +1,18 @@
 
+
 #include <iostream>
 #include "../Vector.h"
+#include "../Alloc.h"
+#include "../Allocator.h"
+#include <memory>
+
 
 using namespace TinySTL;
 
 int main()
 {
-	vector<int> ivec;
-	ivec.push_back(1);
+	allocator<int> alloc;
+	int* ptr = alloc.allocate();
+	
 	return 0;
 }
