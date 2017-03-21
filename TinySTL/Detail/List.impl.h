@@ -142,6 +142,12 @@ namespace TinySTL
 		return ret;
 	}
 	
+	template<class T>
+	void list<T>::clear()
+	{
+		erase(list_iterator<T>(head), list_iterator<T>(tail));
+	}
+	
 	
 	
 	
