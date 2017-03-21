@@ -107,14 +107,14 @@ namespace TinySTL {
 		return !((*this) == v);
 	}
  	
-	template<class T1, class Alloc_>   // 友元函数  非成员函数 
-	bool operator == (const vector<T1, Alloc_>& v1, const vector<T1, Alloc_>& v2)
+	template<class T, class Alloc>   // 友元函数  非成员函数 
+	bool operator == (const vector<T, Alloc>& v1, const vector<T, Alloc>& v2)
 	{
 		return v1.operator == (v2);
 	}
 	
-	template<class T1, class Alloc_>   // 友元函数  非成员函数 
-	bool operator != (const vector<T1, Alloc_>& v1, const vector<T1, Alloc_>& v2)
+	template<class T, class Alloc>   // 友元函数  非成员函数 
+	bool operator != (const vector<T, Alloc>& v1, const vector<T, Alloc>& v2)
 	{
 		return !(v1 == v2);
 	}

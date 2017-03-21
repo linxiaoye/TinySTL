@@ -16,9 +16,22 @@
 
 namespace TinySTL 
 {
+	template<class T, class Alloc>
+	class vector;
+	
+	template<class T, class Alloc = allocator<T>>
+	bool operator == (const vector<T, Alloc>& v1, const vector<T, Alloc>& v2);
+	template<class T, class Alloc = allocator<T>>
+	bool operator != (const vector<T, Alloc>& v1, const vector<T, Alloc>& v2);
+	
+	
 	template<class T, class Alloc = allocator<T>>
 	class vector 
 	{
+	public:                                       //  友元函数声明 
+		friend bool operator == <T, Alloc>(const vector<T, Alloc>& v1, const vector<T, Alloc>& v2);
+		friend bool operator != <T, Alloc>(const vector<T, Alloc>& v1, const vector<T, Alloc>& v2);
+		
 	private:   
 	    /*************vector的数据结构*************************/       
 		T* _start;             // 目前已被占用空间的起始位置 
@@ -54,11 +67,7 @@ namespace TinySTL
 		bool operator == (const vector& v) const;
 		bool operator != (const vector& v) const;
 		
-	public:                                       //  友元函数声明 
-		template<class T1, class Alloc_>
-		friend bool operator == (const vector<T1, Alloc_>& v1, const vector<T1, Alloc_>& v2);
-		template<class T1, class Alloc_>
-		friend bool operator != (const vector<T1, Alloc_>& v1, const vector<T1, Alloc_>& v2);
+
 		
 		/*****************容量大小相关函数 **************************/
 		difference_type size() const { return _finish - _start; }
