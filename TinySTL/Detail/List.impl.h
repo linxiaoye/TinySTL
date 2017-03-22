@@ -87,8 +87,27 @@ namespace TinySTL
 			push_back(last);		
 	}
 	template<class T>
-	list<T>::list()
-	
+	list<T>::list(const list& l)
+	{
+		head = new_node();
+		tail = head;
+		insert(end(), l.begin(), l.end());
+	}
+	template<class T>
+	auto list<T>::operator = (const list& rhs) -> list&
+	{
+		if (*this == rhs) return *this;
+		clear();
+		head = new_node();
+		tail = head;
+		insert(end(), rhs.begin(), rhs.end());
+		return *this;	
+	}	
+	template<class T>
+	list<T>::~list()
+	{
+		clear();
+	}
 	/*******************************/
 	
 	
