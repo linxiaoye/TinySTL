@@ -73,7 +73,9 @@ namespace TinySTL
 	template<class InputIterator>   // 若不是数字 
 	void list<T>::ctor_aux(InputIterator first, InputIterator last, std::false_type)
 	{
-		head = new_node();    /////////////////////////////////
+		head = new_node();
+		tail = head;
+		insert(list_iterator<T>(tail), first, last);    
 	}
 	template<class T>
 	template<class InputIterator>   // 若是数字 
@@ -84,6 +86,8 @@ namespace TinySTL
 		while (first--)
 			push_back(last);		
 	}
+	template<class T>
+	list<T>::list()
 	
 	/*******************************/
 	
@@ -91,7 +95,7 @@ namespace TinySTL
 	template<class T>
 	void list<T>::push_back(const value_type& val)
 	{
-		insert(list_iterator<T>(tail), val);
+		insert(end(), val);
 	}
 	template<class T>
 	void list<T>::pop_back()
@@ -102,12 +106,12 @@ namespace TinySTL
 	template<class T>
 	void list<T>::push_front(const value_type& val)
 	{
-		insert(list_iterator<T>(head), val);
+		insert(begin(), val);
 	}
 	template<class T>
 	void list<T>::pop_front()
 	{
-		erase(list_iterator<T>(head));
+		erase(begin());
 	}
 	
 	template<class T>
@@ -186,7 +190,7 @@ namespace TinySTL
 	}	
 	template<class T>
 	template<class InputIterator>
-	void list<T::insert_aux(iterator pos, InputIterator first, InputIterator last, std::false_type)
+	void list<T>::insert_aux(iterator pos, InputIterator first, InputIterator last, std::false_type) 
 	{
 		while (first != last)
 		{
@@ -194,7 +198,32 @@ namespace TinySTL
 		}
 	}
 	
+	template<class T>
+	auto list<T>::erase(iterator pos) -> iterator
+	{
+		if (pos = begin())
+		{
+			node_ptr tmp = pos.p->next;
+			tmp->prev = nullptr;
+			delete_node(pos);
+			return list_iterator<T>(tmp);
+		}
+		iterator ret = list_iterator<T>(pos.p->next);
+		pos.p->prev->next = pos.p->next;
+		pos.p->next->prev = pos.p->prev;
+		delete_node(pos.p);
+		return ret;
+	}
 	
+	template<class T>
+	auto list<T>::erase(iterator first, iterator last) -> iterator
+	{
+		while (first != last)
+		{
+			erase(first++);
+		}
+		return last;
+	}
 		 
 	
 	
@@ -208,6 +237,14 @@ namespace TinySTL
 		node_allocator::construct(ret, node<T>(val, nullptr, nullptr, this));
 		return ret;
 	} 	
+	template<class T>
+	void list<T>::delete_node(node_ptr ptr)
+	{
+		ptr->prev = ptr->next = nullptr;
+		node_allocator::destroy(ptr);
+		node_allocator::deallocate(ptr);
+	}
+	
 
 	
 	

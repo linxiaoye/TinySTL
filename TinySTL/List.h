@@ -131,7 +131,7 @@ namespace TinySTL
 		void insert(iterator pos, size_type n, const value_type& val);
 		template<class InputIterator>
 		void insert(iterator pos, InputIterator first, InputIterator last);
-		
+			
 		iterator erase(iterator pos);
 		iterator erase(iterator first, iterator last);
 		
@@ -165,7 +165,7 @@ namespace TinySTL
 		void insert_aux(iterator pos, InputIterator first, InputIterator last, std::false_type);
 		template<class InputIterator>
 		void insert_aux(iterator pos, InputIterator first, InputIterator last, std::true_type);		
-		
+		void delete_node(node_ptr ptr);
 		
 	};   // end of class list
 	
