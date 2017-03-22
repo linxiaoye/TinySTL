@@ -134,6 +134,7 @@ namespace TinySTL
 		
 		iterator erase(iterator pos);
 		iterator erase(iterator first, iterator last);
+		
 		void clear();
 		void swap(list& rhs);
 		void splice(iterator pos, list& x);
@@ -160,6 +161,12 @@ namespace TinySTL
 		void ctor_aux(InputIterator first, InputIterator last, std::false_type);
 		template<class InputIterator>
 		void ctor_aux(InputIterator first, InputIterator last, std::true_type);		
+		template<class InputIterator>
+		void insert_aux(iterator pos, InputIterator first, InputIterator last, std::false_type);
+		template<class InputIterator>
+		void insert_aux(iterator pos, InputIterator first, InputIterator last, std::true_type);		
+		
+		
 	};   // end of class list
 	
 	

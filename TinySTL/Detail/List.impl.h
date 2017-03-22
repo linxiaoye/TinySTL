@@ -85,6 +85,8 @@ namespace TinySTL
 			push_back(last);		
 	}
 	
+	/*******************************/
+	
 	
 	template<class T>
 	void list<T>::push_back(const value_type& val)
@@ -94,7 +96,8 @@ namespace TinySTL
 	template<class T>
 	void list<T>::pop_back()
 	{
-		erase(list_iterator<T>(tail));
+		node_ptr tmp = tail->prev;
+		erase(list_iterator<T>(tmp));
 	}
 	template<class T>
 	void list<T>::push_front(const value_type& val)
@@ -148,7 +151,48 @@ namespace TinySTL
 		erase(list_iterator<T>(head), list_iterator<T>(tail));
 	}
 	
-	
+	template<class T>
+	auto list<T>::insert(iterator pos, const value_type& val) -> iterator
+	{
+		node_ptr tmp = new_node(val);
+		tmp->prev = pos.p->prev;
+		tmp->next = pos.p;
+		pos.p->prev->next = tmp;
+		pos.p->prev = tmp;
+		return list_iterator<T>(tmp);
+	}
+	template<class T>
+	void list<T>::insert(iterator pos, size_type n, const value_type& val)
+	{
+		while (n--)
+		{
+			insert(pos, val);
+		}
+	}
+	template<class T>
+	template<class InputIterator>
+	void list<T>::insert(iterator pos, InputIterator first, InputIterator last)
+	{
+		insert_aux(pos, first, last, std::is_integral<InputIterator>::type());
+	}
+	template<class T>
+	template<class InputIterator>
+	void list<T>::insert_aux(iterator pos, InputIterator first, InputIterator last, std::true_type)
+	{
+		while (first--)
+		{
+			insert(pos, last);	
+		}	
+	}	
+	template<class T>
+	template<class InputIterator>
+	void list<T::insert_aux(iterator pos, InputIterator first, InputIterator last, std::false_type)
+	{
+		while (first != last)
+		{
+			insert(pos, *(first++));	
+		}
+	}
 	
 	
 		 
