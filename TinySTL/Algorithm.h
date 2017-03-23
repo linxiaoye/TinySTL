@@ -11,7 +11,7 @@
 // #include "Functional.h"
 #include "Iterator.h"
 #include "TypeTraits.h"
-// #include "Utility.h"
+#include "Utility.h"
 
 
 namespace TinySTL 
@@ -42,8 +42,13 @@ namespace TinySTL
 		return first + n;
 	}
 	
-	
-	
+	/********************[ less ]***********************************/
+	/********************[Algorithm Time Complexity: O(1)]************/	
+	template<class T>
+	bool less(const T& lhs, const T& rhs)
+	{
+		return lhs < rhs;
+	}
 	
 	
 }   // namespace TinySTL
