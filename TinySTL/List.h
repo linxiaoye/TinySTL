@@ -10,6 +10,8 @@
 #include "Uninitialized.h"
 #include "Iterator.h"
 #include "TypeTraits.h"
+#include "Utility.h"
+#include "Algorithm.h"
 
 #include <type_traits>
 
@@ -132,7 +134,7 @@ namespace TinySTL
 		template<class InputIterator>
 		void insert(iterator pos, InputIterator first, InputIterator last);
 			
-		iterator erase(iterator pos);
+		iterator erase(iterator pos);   // 返回的iterator指向删除节点后一个位置 
 		iterator erase(iterator first, iterator last);
 		
 		void clear();
@@ -140,13 +142,13 @@ namespace TinySTL
 		void splice(iterator pos, list& x);
 		void splice(iterator pos, list& x, iterator i);
 		void splice(iterator pos, list& x, iterator first, iterator last);
-		void remove(const value_type& val);
+		void remove(const value_type& val);    // 将值为val的所有元素移除 
 		template<class Predicate>
-		void remove_if(Predicate pred);
-		void unique();
+		void remove_if(Predicate pred);   // 自定义Predicate，如果 pred(*iter)为真，则删除节点 
+		void unique(); // 移除相同值的连续元素，只有相同值且连续，才会被移除至只剩一个元素 
 		template<class BinaryPredicate>
 		void unique(BinaryPredicate binary_pred);
-		void merge(list& x);
+		void merge(list& x); // 合并两个已经过递增排序的序列 
 		template<class Compare>
 		void merge(list& x, Compare comp);
 		void sort();
@@ -166,6 +168,8 @@ namespace TinySTL
 		template<class InputIterator>
 		void insert_aux(iterator pos, InputIterator first, InputIterator last, std::true_type);		
 		void delete_node(node_ptr ptr);
+		const_iterator iterator_to_const_iterator(iterator it);
+		void transfer(iterator pos, iterator first, iterator last);
 		
 	};   // end of class list
 	
