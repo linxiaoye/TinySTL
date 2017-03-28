@@ -77,17 +77,34 @@ namespace TinySTL
 	private:
 		void set_node(map_pointer new_node);
 	}; 
+
+	/*********************** class deque  *******************************/
+	template<class T, class Alloc = allocator<T>, size_t Buf_sz = 0>
+	class deque
+	{
+	public:
+		typedef T          value_type;
+		typedef T          value_type;
+		typedef T*         pointer;
+		typedef T&         reference;
+		typedef size_t     size_type;
+		typedef ptrdiff_t  difference_type;
+
+
+
+
+
+
+
+
+
+
+	};
+
+
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-}
+}   // namespace TinySTL
 
 
 #include "./Detail/Deque.impl.h"

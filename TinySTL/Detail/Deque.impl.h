@@ -105,14 +105,6 @@ namespace TinySTL
 	}	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
 }  // namespace TinySTL
 
 
