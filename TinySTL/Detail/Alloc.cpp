@@ -39,8 +39,8 @@ namespace TinySTL {
 		}
 	} 
 	void* alloc::_reallocate(void* ptr, size_t old_sz, size_t new_sz) {
-		deallocate(ptr, old_sz);
-		ptr = allocate(new_sz);
+		_deallocate(ptr, old_sz);
+		ptr = _allocate(new_sz);
 		return ptr;
 	}
 	void* alloc::refill(size_t bytes) {       // 当freelist中没有合适bytes的块，就执行refill 
@@ -121,16 +121,4 @@ namespace TinySTL {
 		} 
 	} 	
 }   // namespace TinySTL
-
-
-
-
-
-
-
-
-
-
-
-
 
