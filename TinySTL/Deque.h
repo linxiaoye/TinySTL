@@ -79,16 +79,80 @@ namespace TinySTL
 	}; 
 
 	/*********************** class deque  *******************************/
+	/*友元函数先声明*/
+	template<class T, class Alloc = allocator<T>, size_t Buf_sz = 0>
+	bool operator == (const deque<T, Alloc, Buf_sz>& lhs, const deque<T, Alloc, Buf_sz>& rhs);
+	template<class T, class Alloc = allocator<T>, size_t Buf_sz = 0>
+	bool operator != (const deque<T, Alloc, Buf_sz>& lhs, const deque<T, Alloc, Buf_sz>& rhs);
+	template<class T, class Alloc = allocator<T>, size_t Buf_sz = 0>
+	void swap (deque<T, Alloc, Buf_sz>& lhs, deque<T, Alloc, Buf_sz>& rhs);
+
+
 	template<class T, class Alloc = allocator<T>, size_t Buf_sz = 0>
 	class deque
 	{
+	public:  // 友元函数
+		friend class dq_iter<T, T&, T*, Buf_sz>;
+
+		friend bool operator == (const deque& lhs, const deque& rhs);
+		friend bool operator != (const deque& lhs, const deque& rhs);
+		friend void swap(deque& lhs, deque& rhs);
 	public:
-		typedef T          value_type;
 		typedef T          value_type;
 		typedef T*         pointer;
 		typedef T&         reference;
+		typedef const T&   const_reference;
 		typedef size_t     size_type;
 		typedef ptrdiff_t  difference_type;
+
+		typedef dq_iter<T, T&, T*, Buf_sz>   iterator;
+
+	private:
+		typedef pointer*   map_pointer;
+		typedef Alloc      data_allocator;
+		typedef allocator<pointer> map_allocator;
+	private:
+		iterator start;   // 指向起始位置
+		iterator finish;  // 指向末尾位置
+		map_pointer map;  // 指向所谓的map
+		size_type map_size; // map的长度，也就是有几段缓存区
+
+	public:
+		deque();
+		explicit deque(size_type n, const value_type& val = value_type());
+		template<class InputIterator>
+		deque(InputIterator first, InputIterator last);
+		deque(const deque& x);
+		~deque();
+
+		deque& operator = (const deque&);
+		deque& operator = (deque&&);
+
+	public:
+		iterator begin() { return start; }
+		iterator end() { return finish; }
+
+		reference operator [] (difference_type n) { return start[n]; }
+		const_reference operator [] (difference_type n) const { return start[n]; }
+
+		reference front() { return *start; }
+		const_reference front() const { return *start; }
+		reference back() { return *(finish - 1); }
+		const_reference back() const { return *(finish - 1); }
+		size_type size() const { return finish - start; }
+		bool empty() const { return start == finish; }
+		size_type max_size() { return size_type(-1); }
+
+		void push_back(const value_type& val);
+		void push_front(const value_type& val);
+		void pop_back();
+		void pop_front();
+		void swap();
+		void clear();
+
+
+
+
 
 
 
