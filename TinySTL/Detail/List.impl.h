@@ -106,8 +106,10 @@ namespace TinySTL
 	template<class T>
 	list<T>::~list()
 	{
-		clear();
+		clear(); 
+		head = tail = nullptr;  //clear之后 head = tail 仍指向最后的那一个节点
 	}
+
 	/*******************************/
 	
 	
@@ -146,13 +148,25 @@ namespace TinySTL
 	template<class T>
 	typename list<T>::const_iterator list<T>::begin() const 
 	{
-		auto tmp = (list*const)this;	
+		auto tmp = (const list*)this;	
+		return iterator_to_const_iterator(iterator(tmp->head));
+	}
+	template<class T>
+	typename list<T>::const_iterator cbegin() const
+	{
+		auto tmp = (const list*)this;
 		return iterator_to_const_iterator(iterator(tmp->head));
 	}
 	template<class T>
 	typename list<T>::const_iterator list<T>::end() const
 	{
-		auto tmp = (list*const)this;
+		auto tmp = (const list*)this;
+		return iterator_to_const_iterator(iterator(tmp->tail));
+	}
+	template<class T>
+	auto list<T>::cend() const -> const_iterator
+	{
+		auto tmp = (const list*)this;
 		return iterator_to_const_iterator(iterator(tmp->tail));
 	}
 	
@@ -453,7 +467,7 @@ namespace TinySTL
 	auto list<T>::iterator_to_const_iterator(iterator it) -> const_iterator
 	{
 		using nodeCP = node<const T> *;
-		auto tmp = (list<const T>*const)this;
+		auto tmp = (const list<const T>*)this;
 		node<const T> node(it.p->data, nodeCP(it.p->prev), nodeCP(it.p->next), tmp);
 		return const_iterator(&node);
 	}
