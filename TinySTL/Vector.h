@@ -84,10 +84,6 @@ namespace TinySTL
 		iterator end() { return _finish; }
 		const_iterator end() const { return _finish; }
 		const_iterator cend() const { return _finish; }
-		// reverse_iterator rbegin();
-		// const_reverse_iterator crbrgin();
-		// reverse_iterator rend();
-		// const_reverse_iterator();
 			
 		/****************访问元素相关函数*****************************/  
 		reference front() { return *(begin()); }

@@ -79,9 +79,11 @@ namespace TinySTL {
 	}
 	
 	template<class T, class Alloc>
-	vector<T, Alloc>::~vector()
+	vector<T, Alloc>::~vector()      
 	{
-		clear();
+		clear();  // 只析构了元素
+		dataAllocator::deallocate(begin(), capacity()); // 还要回收空间
+		_start = _finish = _end_of_storage = nullptr;
 	}
 
  	/*****************比较操作相关函数 ***************************/
@@ -337,7 +339,7 @@ namespace TinySTL {
 	template<class T, class Alloc>
 	void vector<T, Alloc>::clear()
 	{
-		destroy_and_deallocate_all();
+		dataAllocator::destroy(begin(), end());
 		_finish = _start;
 	}	
 
