@@ -56,6 +56,7 @@ namespace TinySTL
 		dq_iter() : cur(nullptr), first(nullptr), last(nullptr), node(nullptr) { }
 		dq_iter(const dq_iter& x) 
 			: cur(x.cur), first(x.first), last(x.last), node(x.node) { }
+		~dq_iter() { cur = first = last = node = nullptr;  }
 		
 		/* 重载操作符 */
 		reference operator * () const { return *cur; }
@@ -91,7 +92,7 @@ namespace TinySTL
 	template<class T, class Alloc = allocator<T>, size_t Buf_sz = 0>
 	class deque
 	{
-	public:  // 友元函数
+	public:  // 友元
 		friend class dq_iter<T, T&, T*, Buf_sz>;
 
 		friend bool operator == (const deque& lhs, const deque& rhs);
@@ -129,7 +130,7 @@ namespace TinySTL
 		deque& operator = (deque&&);
 
 	public:
-		iterator begin() { return start; }
+		iterator begin() { return start; }  //start本身就是迭代器
 		iterator end() { return finish; }
 
 		reference operator [] (difference_type n) { return start[n]; }
@@ -148,9 +149,16 @@ namespace TinySTL
 		void pop_back();
 		void pop_front();
 		void swap();
-		void clear();
+		void clear(); //clear之后还会剩下一段缓存区，map还没有被析构和释放
 
-
+	private:
+		void create_map_and_nodes(size_type num_elem);
+		size_type initial_map_size() { return 8; }
+		void fill_initialize(size_type n, const value_type& val);
+		template<class InputIterator>
+		void deque_aux(InputIterator first, InputIterator last, std::true_type);
+		template<class InputIterator>
+		void deque_aux(InputIterator first, InpurIterator last, std::false_type);
 
 
 
