@@ -49,7 +49,13 @@ namespace TinySTL
 	{
 		return lhs < rhs;
 	}
-	
+
+	/********************[ copy ]***********************************/
+	/********************[Algorithm Time Complexity: O(n)]************/
+	template<>
+
+
+
 	
 }   // namespace TinySTL
 
