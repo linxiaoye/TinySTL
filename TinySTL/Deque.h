@@ -5,8 +5,10 @@
 *  Author  @linxiaoye
 */
 
+
 #include "Allocator.h"
 #include "Iterator.h"
+#include "Uninitialized.h"
 
 
 namespace TinySTL
@@ -147,8 +149,11 @@ namespace TinySTL
 		void push_front(const value_type& val);
 		void pop_back();
 		void pop_front();
-		void swap();
+		void swap(deque& x);
 		void clear(); //clear之后还会剩下一段缓存区，map还没有被析构和释放
+
+		bool operator == (const deque& x) const;
+		bool operator != (const deque& x) const;
 
 	private:
 		void create_map_and_nodes(size_type num_elem);
@@ -160,25 +165,10 @@ namespace TinySTL
 		void deque_aux(InputIterator first, InpurIterator last, std::false_type);
 
 
-
-
-
-
-
-
-
-
-
-
-	};
-
-
-	
+	};  // end of class deque
 	
 }   // namespace TinySTL
 
-
 #include "./Detail/Deque.impl.h"
-
 
 #endif // _DEQUE_H_
