@@ -2,7 +2,7 @@
 #define _UTILITY_H_
 
 /*
-*  Author   @linxiaoye
+*  Author   @yyehl
 */
 
 namespace TinySTL

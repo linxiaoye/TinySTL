@@ -1,7 +1,7 @@
 #include "../Alloc.h"
 
 /*
-*        Author  @linxiaoye
+*        Author  @yyehl
 */
 
 namespace TinySTL {

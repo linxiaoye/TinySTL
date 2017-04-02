@@ -2,7 +2,7 @@
 #define _ALLOC_H_
 
 /*
-*        Author  @linxiaoye
+*        Author  @yyehl
 */
 
 #include <cstdlib>

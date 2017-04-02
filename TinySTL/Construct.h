@@ -2,7 +2,7 @@
 #define _CONSTRUCT_H_
 
 /*
-*        Author  @linxiaoye
+*        Author  @yyehl
 */
 
 #include <new>

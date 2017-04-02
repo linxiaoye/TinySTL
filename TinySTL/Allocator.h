@@ -2,7 +2,7 @@
 #define _ALLOCATOR_H_
 
 /*
-*     Author  @linxiaoye
+*     Author  @yyehl
 */
 
 #include <cassert>

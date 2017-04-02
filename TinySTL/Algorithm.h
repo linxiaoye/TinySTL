@@ -2,7 +2,7 @@
 #define _ALGORITHM_H_
 
 /*
-*   Author  @linxiaoye
+*   Author  @yyehl
 */
 
 #include <cstring>

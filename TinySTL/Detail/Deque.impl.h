@@ -2,7 +2,7 @@
 #define _DEQUE_IMPL_H_
 
 /*
-*   Author @linxiaoye
+*   Author @yyehl
 */
 
 namespace TinySTL 
@@ -376,7 +376,6 @@ namespace TinySTL
 			uninitialized_copy(start, first, last);
 		}
 	}
-
 
 	/*  外部友元函数 */
 	template<class T, class Alloc, size_t Buf_sz>

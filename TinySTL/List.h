@@ -2,7 +2,7 @@
 #define _LIST_H_
 
 /*
-*		Author  @linxiaoye
+*		Author  @yyehl
 */
 
 #include "Allocator.h"

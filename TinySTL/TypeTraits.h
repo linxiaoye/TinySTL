@@ -2,7 +2,7 @@
 #define _TYPE_TRAITS_H_
 
 /*
-*     Author @linxiaoye  
+*     Author @yyehl
 */
 
 namespace TinySTL {

@@ -2,7 +2,7 @@
 #define _VECTOR_IMPL_H_
 
 /*
-*   Author @linxiaoye
+*   Author @yyehl
 */
 
 namespace TinySTL {

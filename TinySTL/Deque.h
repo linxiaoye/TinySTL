@@ -2,7 +2,7 @@
 #define _DEQUE_H_
 
 /*
-*  Author  @linxiaoye
+*  Author  @yyehl
 */
 
 

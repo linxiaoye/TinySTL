@@ -2,7 +2,7 @@
 #define _VECTOR_H_
 
 /*
-*  Author  @linxiaoye
+*  Author  @yyehl
 */
 #include <type_traits>
 
