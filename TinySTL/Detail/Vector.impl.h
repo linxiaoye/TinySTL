@@ -204,8 +204,8 @@ namespace TinySTL {
 		{
 			if (n <= size_type(_end_of_storage - _finish))
 			{
-				auto elem_after = _finish - pos;   // 插入点之后剩多少元素
-				if (elem_after > n)                 
+				size_type elem_after = _finish - pos;   // 插入点之后剩多少元素
+				if (n < elem_after)                 
 				{
 					auto iter = end();
 					auto new_finish = end() + n;
@@ -227,7 +227,7 @@ namespace TinySTL {
 			{
 				size_type old_size = size();
 				size_type new_capacity = (n > capacity()) ? n : get_new_capacity();
-				auto new_start = dataAllocator(new_capacity);
+				T* new_start = dataAllocator::allocate(new_capacity);
 				uninitialized_copy(begin(), pos, new_start);
 				auto new_pos = new_start + (pos - begin());
 				uninitialized_fill_n(new_pos, n, val);
@@ -250,7 +250,7 @@ namespace TinySTL {
 	template<class InputIterator>
 	void vector<T, Alloc>::insert_aux(iterator pos, InputIterator n, InputIterator val, std::true_type)
 	{
-		insert(pos, n, val);
+		insert(pos, size_type(n), val);
 	}
 	template<class T, class Alloc>
 	template<class InputIterator>

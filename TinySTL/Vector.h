@@ -70,8 +70,8 @@ namespace TinySTL
 
 		
 		/*****************容量大小相关函数 **************************/
-		difference_type size() const { return _finish - _start; }
-		difference_type capacity() const { return _end_of_storage - _start; }
+		size_type size() const { return _finish - _start; }
+		size_type capacity() const { return _end_of_storage - _start; }
 		bool empty() const { return _start == _finish; }
 		void resize(size_type n, value_type val = value_type());
 		void reserve(size_type n);
@@ -119,7 +119,7 @@ namespace TinySTL
 		template<class InputIterator>
 		void allocate_and_copy(InputIterator first, InputIterator last);
 		void destroy_and_deallocate_all();
-		size_type get_new_capacity(const size_type old_capacity)
+		size_type get_new_capacity()
 		{
 			return (capacity() == 0) ? 1 : 2 * capacity(); 
 		}
