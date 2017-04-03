@@ -52,7 +52,7 @@ namespace TinySTL
 
 	/********************[ copy ]***********************************/
 	/********************[Algorithm Time Complexity: O(n)]************/
-	template<>
+	
 
 
 
@@ -119,7 +119,7 @@ namespace TinySTL
 	{
 		if (first != last)
 		{
-			swap(*first, *(last - 1);
+			swap(*first, *(last - 1));
 			down_heap(first, last - 2, first);
 		}
 
