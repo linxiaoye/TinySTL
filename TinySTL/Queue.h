@@ -5,6 +5,8 @@
 *   Author  @yyehl
 */
 
+#include "Deque.h"
+
 namespace TinySTL
 {
 
