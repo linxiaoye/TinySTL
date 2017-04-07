@@ -5,7 +5,6 @@
 int main()
 {
 	TinySTL::vector<int> ivec(10);
-	// std::cout << ivec[0] << " " << ivec[1] << std::endl;
 
 	
 	ivec.push_back(1);
