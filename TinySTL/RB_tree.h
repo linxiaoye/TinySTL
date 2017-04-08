@@ -104,9 +104,34 @@ namespace TinySTL
 	};
 
 	/************************** class rb_tree ****************************/
+
+	template<class Key, class Value, class KeyOfValue, class Compare, class Alloc>
+	class rb_tree;
+
+	template<class Key, class Value, class KeyOfValue, class Compare, class Alloc>
+	bool operator == (const rb_tree<Key, Value, KeyOfValue, Compare, Alloc>& lhs, const rb_tree<Key, Value, KeyOfValue, Compare, Alloc>& rhs)
+	{
+		return lhs.operator==(rhs);
+	}
+	template<class Key, class Value, class KeyOfValue, class Compare, class Alloc>
+	bool operator != (const rb_tree<Key, Value, KeyOfValue, Compare, Alloc>& lhs, const rb_tree<Key, Value, KeyOfValue, Compare, Alloc>& rhs)
+	{
+		return lhs.operator!=(rhs);
+	}
+	template<class Key, class Value, class KeyOfValue, class Compare, class Alloc>
+	void swap(const rb_tree<Key, Value, KeyOfValue, Compare, Alloc>&lhs, const rb_tree<Key, Value, KeyOfValue, Compare, Alloc>& rhs)
+	{
+		return lhs.swap(rhs);
+	}
+
+
 	template<class Key, class Value, class KeyOfValue, class Compare, class Alloc = allocator<rb_tree_node<value>>>
 	class rb_tree
 	{
+	public:
+		friend bool operator == (const rb_tree& lhs, const rb_tree& rhs);
+		friend bool operator != (const rb_tree& lhs, const rb_tree& rhs);
+		friend void swap(rb_tree& lhs, rb_tree& rhs);
 	protected:
 		typedef void*                  void_pointer;
 		typedef rb_tree_node<Value>    tree_node;
@@ -176,10 +201,19 @@ namespace TinySTL
 		const_iterator end() const { return const_iterator(header); }
 		bool empty() const { return size() == 0; }
 		size_type size() const { return node_count; }
+		size_type max_size() const { return size_type(-1); }
+		bool contain(const value_type& val) const;
 
+		bool operator == (const rb_tree& x) { return header == x.header && key_compare = x.key_compare && node_count = x.node_count; }
+		bool operator != (const rb_tree& x) { return !(*this == x); }
 
-
-
+		iterator insert_equal(const value_type& val);
+		pair<iterator, bool> insert_unique(const value_type& val);
+		void erase(iterator pos);
+		iterator find(const value_type& val); 
+		void clear();
+		void swap(rb_tree& x);
+		
 
 
 	};
