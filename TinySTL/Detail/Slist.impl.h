@@ -11,7 +11,7 @@ namespace TinySTL
 	template<class T, class Alloc>
 	slist<T, Alloc>::slist(size_type n, const value_type& val)
 	{
-		slist_node<T>* ptr;
+		slist_node<T>* ptr; 
 		while (n--)
 		{
 			ptr = create_node(val);

@@ -51,15 +51,15 @@ namespace TinySTL
 	template<class T>	
 	struct list_iterator: public iterator<bidirectional_iterator_tag, T>
 	{
-		template<T>                        // 表示只有参数同为T时，这个list才是对应list_iterator的友元类 
-		friend class list;                 //  list 可以访问 list_iterator的所有成员 
+		                                    // 表示只有参数同为T时，这个list才是对应list_iterator的友元类 
+		friend class list<T>;                 //  list 可以访问 list_iterator的所有成员 
 		
 		public:
 			typedef node<T>* node_ptr;
 			node_ptr p;                    // list_iterator的数据成员，一个指向node的指针 
 		public:
 			explicit list_iterator(node_ptr ptr = nullptr) : p(ptr) { }   // 不允许隐式转换 
-			
+			  
 			inline list_iterator& operator ++ ();    // 前置++ 
 			inline list_iterator operator ++ (int);  // 后置++ 
 			inline list_iterator& operator -- ();
