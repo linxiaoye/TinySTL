@@ -29,7 +29,9 @@ namespace TinySTL
 		node_ptr right;
 		node_ptr parent;
 
-		rb_tree_node() : value_field(value_type()), color(RED), left(nullptr), right(nullptr), parent(nullptr) { }
+		rb_tree_node(const value_type& val = value_type(), tree_color color = RED, Tree_node* left = nullptr,
+			tree_node* right = nullptr, tree_node* parent = nullptr) 
+			: value_field(val), color(color), left(left), right(right), parent(parent) { }
 		explicit rb_tree_node(const value_type& val) { rb_tree_node(), value_field = val; }
 		rb_tree_node(const rb_tree_node<Value>& x) : value_field(x.value_field), color(x.color), left(nullptr), 
 			right(nullptr), parent(nullptr) { }
@@ -202,32 +204,26 @@ namespace TinySTL
 		bool empty() const { return size() == 0; }
 		size_type size() const { return node_count; }
 		size_type max_size() const { return size_type(-1); }
-		bool contain(const value_type& val) const;
+		bool contain(const key_type& key) const;
 
 		bool operator == (const rb_tree& x) { return header == x.header && key_compare = x.key_compare && node_count = x.node_count; }
 		bool operator != (const rb_tree& x) { return !(*this == x); }
 
 		iterator insert_equal(const value_type& val);
 		pair<iterator, bool> insert_unique(const value_type& val);
-		void erase(iterator pos);
-		iterator find(const value_type& val); 
+		void erase(tree_node* pos);
+		iterator find(const key_type& key); 
 		void clear();
 		void swap(rb_tree& x);
-		
+
+	private:
+		void destroy_tree(tree_node* root);
+		void rb_tree_balance(tree_node* x, tree_node*& root);
+		void right_rotate(tree_node* x, tree_node*& root);
+		void left_rotate(tree_node* x, tree_node*& root);
 
 
-	};
-
-
-
-
-
-
-
-
-
-
-
+	};  // end of class rb_tree
 
 
 
