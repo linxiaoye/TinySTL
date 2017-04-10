@@ -113,7 +113,24 @@ namespace TinySTL
 	template<class Key, class Value, class KeyOfValue, class Compare, class Alloc>
 	void rb_tree<Key, Value, KeyOfValue, Compare, Alloc>::_erase(tree_node* x)
 	{
-		
+		if (x->left == nullptr && x->right == nullptr && x->color == RED) //1:如果x为叶节点且为RED，直接删除
+		{
+			if (x->parent->left == x) // 判断x是其父节点的左节点还是右节点，因为要改变其父节点的孩子指针
+				x->parent->left = nullptr;
+			else
+				x->parent->right = nullptr;
+			destroy_node(x);
+		}
+		else if (x->left != nullptr && x->right == nullptr) //2:x只有左节点无右节点，单孩子情况，x只能为BLACK
+		{
+			if (x->left->color == RED) // 如果x的左孩子为RED
+			{
+				if (x->parent->left == x)
+				{
+					x->parent->left = x->left;
+				}
+			}
+		}
 	}
 
 	template<class Key, class Value, class KeyOfValue, class Compare, class Alloc>
@@ -228,6 +245,108 @@ namespace TinySTL
 		destroy_tree(root->left);
 		destroy_tree(root->right);
 		destroy_node(root);
+	}
+	template<class Key, class Value, class KeyOfValue, class Compare, class Alloc>
+	void rb_tree<Key, Value, KeyOfValue, Compare, Alloc>::rb_tree_balance(tree_node* x, tree_node*& root)
+	{
+		x->color = RED; // 新建节点未调整前永远为红
+		while (x != root && x->parent->color == RED) // 当x不为root且新建节点的父节点为RED是才需要调整
+		{
+			if (x->parent == x->parent->parent->left) // 当x的父节点为其父节点的左节点时
+			{
+				tree_node* y = x->parent->parent->right; //y为x的伯父节点
+				if (y != nullptr && y->color == RED)  //如果伯父节点存在且为红，则直接调整颜色就行了
+				{
+					x->parent->parent->color = RED;
+					x->parent->color = BLACK;
+					y->color = BLACK;
+					x = x->parent->parent;
+				}
+				else  // 否则，即伯父节点不存在或者为黑
+				{
+					if (x == x->parent->right) // 如果x是其父节点的右儿子，则先左旋调整为左儿子
+					{
+						x = x->parent;
+						left_rotate(x, root);
+					}
+					x->parent->color = BLACK;  // 到这里之后，就只有一种情况，即x和其父节点都是在左边且都是RED
+					x->parent->parent->color = RED;
+					right_rotate(x->parent->parent, root); // 调整颜色并右旋就好了
+				}
+			}
+			else  // 情况和上面的基本对称，当x的父节点为其父节点的右节点
+			{
+				tree_node* y = x->parent->parent->left;
+				if (y != nullptr && y->color == RED)  //当伯父节点为RED
+				{
+					y->color = BLACK;
+					x->parent->color = BLACK;
+					x->parent->parent->color = RED;
+					x = x->parent->parent;
+				}
+				else //伯父节点不为RED
+				{
+					if (x == x->parent->left)
+					{
+						x = x->parent;
+						right_rotate(x, root);
+					}
+					x->parent->color = BLACK;
+					x->parent->parent->color = RED;
+					left_rotate(x->parent->parent, root);
+				}
+			}
+		}
+		root->color = BLACK; //根节点永远为黑
+	}
+	template<class Key, class Value, class KeyOfValue, class Compare, class Alloc>
+	void rb_tree<Key, Value, KeyOfValue, Compare, Alloc>::left_rotate(tree_node* x, tree_node*& root)
+	{   // 只旋转，不进行颜色调整，颜色调整在rb_tree_balance里面
+		tree_node* y = x->right;
+		x->right = y->left;
+		if (y->left != nullptr)
+		{
+			y->left->parent = x;
+		}
+		y->parent = x->parent;
+		if (x == root)
+		{
+			root == y; // 
+		}
+		else if (x == x->parent->left)
+		{
+			x->parent->left = y;
+		}
+		else
+		{
+			x->parent->right = y;
+		}
+		y->left = x->parent;
+		x->parent = y;
+	}
+	template<class Key, class Value, class KeyOfValue, class Compare, class Alloc>
+	void rb_tree<Key, Value, KeyOfValue, Compare, Alloc>::right_rotate(tree_node* x, tree_node*& root)
+	{
+		tree_node* y = x->left;
+		x->left = y->right;
+		if (y->right != nullptr)
+		{
+			y->right->parent = x;
+		}
+		y->parent = x->parent;
+
+		if (x == root)
+			root = y;
+		else if (x == x->parent->left)
+		{
+			x->parent->left = y;
+		}
+		else
+		{
+			x->parent->right = y;
+		}
+		y->right = x;
+		x->parent = y;
 	}
 
 }  // namespace Tiny STL
