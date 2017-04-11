@@ -7,6 +7,8 @@
 
 #include "Iterator.h"
 #include "Allocator.h"
+#include "Utility.h"
+#include "Construct.h"
 
 
 namespace TinySTL
@@ -166,6 +168,7 @@ namespace TinySTL
 		size_type node_count; // 节点的数量，也就是size
 		tree_node* header;    // header是一个设计技巧，parent为根节点，left为最左值，right为最右值，color为RED
 		Compare key_compare;  // 节点间key的比较准则，是一个函数对象
+		tree_node* nil;   // 哨兵节点
 
 	protected: 
 		tree_node*& root() const { return (tree_node*&)header->parent; }  
@@ -184,15 +187,15 @@ namespace TinySTL
 		static tree_node* max_value_node(tree_node* p) { return rb_tree_node<Value>::max_value(p); }
 
 	private:  
-		void init() { header = get_node(); color(header) = RED; root() = nullptr; leftmost() = rightmost() = header; }
+		void init() { header = get_node(); color(header) = RED; nil = get_node(); color(nil) = BLACK; root() = nil; leftmost() = rightmost() = header; }
 		iterator _insert(tree_node* x, tree_node* y, const value_type& val);
 		void _erase(tree_node* p);
 		tree_node* _copy(tree_node* x, tree_node* y);
 
 	public:
-		rb_tree(const Compare& cmp = Compare()) : key_compare(cmp) { }
+		rb_tree(const Compare& cmp = Compare()) : key_compare(cmp) { nil->color = BLACK; }
 		rb_tree(const rb_tree<Key, Value, KeyOfValue, Compare, Alloc>& x);
-		~rb_tree() { clear(); put_node(header); }
+		~rb_tree() { clear(); put_node(header); put_node(nil); }
 
 		rb_tree& operator = (const rb_tree<Key, Value, KeyOfValue, Compare, Alloc>& x);
 
@@ -218,9 +221,10 @@ namespace TinySTL
 
 	private:
 		void destroy_tree(tree_node* root);
-		void rb_tree_balance(tree_node* x, tree_node*& root);
+		void rb_insert_balance(tree_node* x, tree_node*& root);
 		void right_rotate(tree_node* x, tree_node*& root);
 		void left_rotate(tree_node* x, tree_node*& root);
+		void rb_erase_balance(bool l_or_r, tree_node* x, tree_node*& root);
 
 
 	};  // end of class rb_tree
