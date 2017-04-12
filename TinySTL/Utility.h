@@ -15,7 +15,20 @@ namespace TinySTL
 		lhs = rhs;
 		rhs = tmp;
 	}
-	
+
+	/************************[ pair ]*********************************/
+	template<class T1, class T2>
+	struct pair
+	{
+		typedef T1   first_type;
+		typedef T2   second_type;
+
+		T1 first;
+		T2 second;
+
+		pair() : first(first_type()), second(second_type()) { }
+		pair(const T1& x, const T2& y) : first(x), second(y) { }
+	};
 	
 	
 }    // namespace TinySTL
