@@ -133,8 +133,6 @@ namespace TinySTL
 	};
 
 
-
-
 	// 证同函数，任何值通过此函数，值不会有任何改变
 	template<class T>
 	struct identity : public unary_function<T, T>
@@ -142,8 +140,20 @@ namespace TinySTL
 		const T& operator () (const T& x) const { return x; }
 	};
 
-	//
-	//
+	// 取第一个
+	template<class T1, class T2>
+	struct select1st : public binary_function<T1, T1, T1>
+	{
+		const T1& operator () (const pair<T1, T2>& x) const { return x.first; }
+	};
+
+	// 取第二个
+	template<class T1, class T2>
+	struct select2st : public binary_function<T1, T2, T2>
+	{
+		const T2& operator () (const pair<T1, T2>& x) const { return x.second; }
+	};
+
 	//
 	//
 	//
