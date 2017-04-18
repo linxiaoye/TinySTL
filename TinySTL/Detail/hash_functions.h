@@ -61,7 +61,7 @@ namespace TinySTL
 		size_t operator()(short x) { return x; }
 	};
 	template<>
-	struct hash<unsignde short>
+	struct hash<unsigned short>
 	{
 		size_t operator()(unsigned short x) { return x; }
 	};
