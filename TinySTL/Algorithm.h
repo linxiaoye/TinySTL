@@ -175,7 +175,17 @@ namespace TinySTL
 
 	/********************[ copy ]***********************************/
 	/********************[Algorithm Time Complexity: O(n)]************/
-	
+	/*
+	     copy将[first, last)里面的元素拷贝到[result, result + (last - first))之中，返回result + (last - first)
+	     如果result位于[first, last) 之中，那么将会出现未可知的结果
+	*/
+	template<class InputIterator, class OutputIterator>
+	OutputIterator copy(InputIterator first, InputIterator last, OutputIterator result)
+	{
+		for (; first != last; ++first, ++result)
+			*result = *first;
+		return result;
+	}
 
 
 	/****************************************************************************************[heap相关]****************************************/
@@ -276,13 +286,128 @@ namespace TinySTL
 	/****************************************************************************************[heap相关]*************************************/
 
 
+	/****************************************************************************************[set相关]*************************************/
+	/********************[ set_union ]***********************************/
+	/********************[Algorithm Time Complexity: O(N)]************/
+	/*
+		求两个有序set的并集，可重复，如果s1中x元素重复m次，s2中x元素重复m次，那么最终结果x元素的次数为max（m，n）
+		输出结果中，并集中保持两个原集合的相对顺序
+		返回值为一个指向输出区间尾端的迭代器
+	*/
+	template<class InputIterator1, class InputIterator2, class OutputIterator>
+	OutputIterator set_union(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, InputIterator2 last2, OutputIterator result)
+	{
+		while (first1 != last1 && first2 != last2)
+		{
+			if (*first1 < *first2)
+			{
+				*result = *first1;
+				++first1;
+			}
+			else if (*first2 < *first1)
+			{
+				*result = *first2;
+				++first2;
+			}
+			else
+			{
+				*result = *first1;
+				++first1;
+				++first2;
+			}
+			++result;
+		}
+		return copy(first1, last1, copy(first2, last2, result));
+	}
 
+	/********************[ set_intersection ]***********************************/
+	/********************[Algorithm Time Complexity: O(N)]************/
+	/*
+		求两个有序set的交集，可重复，如果s1中x元素重复m次，s2中x元素重复m次，那么最终结果x元素的次数为min（m，n）
+		输出结果中，并集中保持两个原集合的相对顺序
+		返回值为一个指向输出区间尾端的迭代器
+	*/
+	template<class InputIterator1, class InputIterator2, class OutputIterator>
+	OutputIterator set_insertsection(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, InputIterator2 last2, OutputIterator result)
+	{
+		while (first1 != last1 && first2 != last2)
+		{
+			if (*first1 < *first2)
+				++first1;
+			else if (*first2 < *first1)
+				++first2;
+			else
+			{
+				*result = *first1;
+				++first1;
+				++first2;
+				++result;
+			}
+		}
+		return result;
+	}
 
+	/********************[ set_difference ]***********************************/
+	/********************[Algorithm Time Complexity: O(N)]************/
+	/*
+		求两个有序set的差集，可重复，如果s1中x元素重复m次，s2中x元素重复m次，那么最终结果x元素的次数为max（m-n，0）
+		输出结果中，并集中保持两个原集合的相对顺序
+		返回值为一个指向输出区间尾端的迭代器
+	*/
+	template<class InputIterator1, class InputIterator2, class OutputIterator>
+	OutputIterator set_difference(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, InputIterator2 last2, OutputIterator result)
+	{
+		while (first1 != last1 && first2 != last2)
+		{
+			if (*first1 < *first2)
+			{
+				*result = *first1;
+				++first1;
+				++result;
+			}
+			else if (*first2 < *first1)
+				++first2;
+			else
+			{
+				++first1; 
+				++first2;
+			}
+		}
+		return copy(first1, last1, result);
+	}
 
-
-
-
-
+	/********************[ set_symmetric_difference ]***********************************/
+	/********************[Algorithm Time Complexity: O(N)]************/
+	/*
+		求两个有序set的对称差集，可重复，如果s1中x元素重复m次，s2中x元素重复m次，那么最终结果x元素的次数为max（|m-n|，0）
+		即在s1中出现但在s2中不出现，以及在s2中出现在s1中不出现的并集
+		即s1，s2两个集合中都只出现了一次的元素，可重复
+		输出结果中，并集中保持两个原集合的相对顺序
+		返回值为一个指向输出区间尾端的迭代器
+	*/
+	template<class InputIterator1, class InputIterator2, class OutputIterator>
+	OutputIterator set_symmetric_difference(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, InputIterator2 last2, OutputIterator result)
+	{
+		while (first1 != last1 && first2 != last2)
+		{
+			if (*first1 < *first2)
+			{
+				*result = first1;
+				++first1;
+			}
+			else if (*first2 < *first1)
+			{
+				*result = *first2;
+				++first2;
+			}
+			else
+			{
+				++first1;
+				++first2;
+			}
+		}
+		return copy(first1, last1, copy(first2, last2, result));
+	}
 
 	
 
