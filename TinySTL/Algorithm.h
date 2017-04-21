@@ -409,7 +409,203 @@ namespace TinySTL
 		return copy(first1, last1, copy(first2, last2, result));
 	}
 
+
+	/********************[ count ]***********************************/
+	/********************[Algorithm Time Complexity: O(N)]************/
+	// 计算[first, last)中元素值等于val的数量
+	template<class InputIterator, class T>
+	size_t count(InputIterator first, InputIterator last, const T& val)
+	{
+		if (first == last) return 0;
+		size_t i = 0;
+		for (; first != last; ++first)
+		{
+			if (*first == val)
+				++i;
+		}
+		return i;
+	}
 	
+	/********************[ find ]***********************************/
+	/********************[Algorithm Time Complexity: O(N)]************/
+	// 返回[first, last)中元素值等于val的第一个迭代器
+	template<class InputIterator, class T>
+	InputIterator find(InputIterator first, InputIterator last, const T& val)
+	{
+		while (first != last && *first != val)
+			++first;
+		return first;
+	}
+
+
+	/********************[ for_each ]***********************************/
+	/********************[Algorithm Time Complexity: O(N)]************/
+	template<class InputIterator, class Function>
+	Function for_each(InputIterator first, InputIterator last, Function f)
+	{
+		for (; first != last; ++first)
+			f(*first);
+		return f;
+	}
+
+	/********************[ includes ]***********************************/
+	/********************[Algorithm Time Complexity: O(N)]************/
+	template<class InputIterator1, class InputIterator2>
+	bool includes(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, InputIterator2 last2)
+	{
+		while (first1 != last1 && first2 != last2)
+		{
+			if (*first2 < *first1) return false;
+			else if (*first1 < *first2) ++first1;
+			else {
+				++first1;
+				++first2;
+			}
+		}
+		return first2 == last2;
+	}
+
+	/********************[ max_element ]***********************************/
+	/********************[Algorithm Time Complexity: O(N)]************/
+	template<class ForwardIterator>
+	ForwardIterator max_element(ForwardIterator first, ForwardIterator last)
+	{
+		if (first == last)  return first;
+		ForwardIterator ret = first;
+		for (++first; first != last; ++first)
+		{
+			if (*first > *ret)
+				ret = first;
+		}
+		return ret;
+	}
+
+	/********************[ min_element ]***********************************/
+	/********************[Algorithm Time Complexity: O(N)]************/
+	template<class ForwardIterator>
+	ForwardIterator min_element(ForwardIterator first, ForwardIterator last)
+	{
+		if (first == last)  return first;
+		ForwardIterator ret = first;
+		while (++first != last)
+		{
+			if (*first < ret)
+				ret = first;
+		}
+		return ret;
+	}
+
+	/********************[ merge ]***********************************/
+	/********************[Algorithm Time Complexity: O(N)]************/
+	template<class InputIterator1, class InputIterator2, class OutputIterator>
+	OutputIterator merge(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, InputIterator2 last2, OutputIterator ret)
+	{
+		while (first1 != last1 && first2 != last2)
+		{
+			if (*first1 < *first2)
+			{
+				*ret = *first1;
+				++first1;
+				++ret;
+			}
+			else
+			{
+				*ret = *first2;
+				++first2;
+				++ret;
+			}
+		}
+		return copy(first1, last1, copy(first2, last2, ret));
+	}
+
+
+	/********************[ partitiom ]***********************************/
+	/********************[Algorithm Time Complexity: O(N)]************/
+	/*
+		将[first, last)的元素重新排序，使的Pred为true在前半段，使得Pred为false的在后半段
+		这个算法不保证元素的原始相对位置（比如说x1在x2前面，x1,x2两元素都从前半段移动到后半段
+										不能保证x1还在x2的前面）
+	
+	*/
+	template<class BidirectionIterator, class Pred>
+	BidirectionIterator partition(BidirectionIterator first, BidirectionIterator last, Pred pred)
+	{
+		while (1)
+		{
+			while (1)
+			{
+				if (first == last)
+					return first;
+				else if (pred(*first))  // 满足不移动条件
+					++first;
+				else                  // 满足移动条件，*first将会被移动到后半段
+					break;  
+			}
+			--last;
+			while (1)
+			{
+				if (first == last)
+					return first;
+				else if (!pred(*last))
+					--last;
+				else
+					break;
+			}
+			iter_swap(first, last);
+			++first;
+		}
+	}
+
+
+	/********************[ search ]***********************************/
+	/********************[Algorithm Time Complexity: O(N)]************/
+	/*
+		寻找序列[first2, last2)在序列[first1, last1)第一次出现的点
+		返回第一次出现的点的末尾元素后一位置
+	*/
+	template<class ForwardIterator1, class ForwardIterator2>
+	InputIterator1 search(ForwardIterator1 first1, ForwardIterator1 last1, ForwardIterator2 first2, ForwardIterator2 last2)
+	{
+		int d1 = last1 - first1;
+		int d2 = last2 - first2; 
+		if (d1 < d2) return last1;  // 如果序列2比序列1都长，那不可能成为其子序列
+
+		ForwardIterator1 cur1 = first1;
+		ForwardIterator2 cur2 = first2;
+
+		while (cur2 != last2)
+		{
+			if (*cur1 == *cur2)  // 如果当前元素相等。则比较下一元素
+			{
+				++cur1;
+				++cur2;
+			}
+			else       // 如果当前元素不相等
+			{
+				if (d1 == d2)  // 并且d1，d2相等，那么就说明不可能成为其子序列了
+					return last1;     // 如果没有找到，就返回序列1的last1
+				else
+				{
+					cur1 = ++first1;
+					cur2 = first2;       // 准备在新的起点再找一次，cur2必须要重新回到first2
+					--d1;
+				}
+			}
+		}
+		return first1;    // 如果找到了，就返回序列1中第一次出现序列2的地方的首位置
+	}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }   // namespace TinySTL
