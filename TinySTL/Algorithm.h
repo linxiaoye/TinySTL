@@ -595,13 +595,99 @@ namespace TinySTL
 		return first1;    // 如果找到了，就返回序列1中第一次出现序列2的地方的首位置
 	}
 
+	/********************[ lower_bound ]***********************************/
+	/********************[Algorithm Time Complexity: O(logN)]************/
+	/*
+		另一种版本的二分查找
+		返回值是，在不破坏排序状态的情况下，可插入value的第一个位置
+	*/
+	template<class ForwardIterator, class T>
+	ForwardIterator lower_bound(ForwardIterator first, ForwardIterator last, const T& val)
+	{
+		if (first == last)  return first;
+		int len = last - first;
+		int half = 0;
+		ForwardIterator mid = first;
+		while (len > 0)
+		{
+			half = len >> 1;  //  half = len / 2;
+			mid = first;
+			mid = first + half;
+			if (*mid < val)
+			{
+				first = mid;
+				++first;
+				half = len - half - 1;
+			}
+			else
+			{
+				len = half;
+			}
+			return first;
+		}
 
 
+	}
 
+	/********************[ upper_bound ]***********************************/
+	/********************[Algorithm Time Complexity: O(logN)]************/
+	/*
+		另一种版本的二分查找
+		返回值是，在不破坏排序状态的情况下，可插入value的第一个位置
+	*/
+	template<class ForwardIterator, class T>
+	ForwardIterator upper_bound(ForwardIterator first, ForwardIterator last, const T& val)
+	{
+		if (first == last)  return first;
+		int len = last - first;
+		int half = 0;
+		ForwardIterator mid;
 
+		while (len > 0)
+		{
+			half = len >> 1;
+			mid = first + half;
+			if (val < *mid)
+			{
+				len = half;
+			}
+			else
+			{
+				first = mid;
+				++first;
+				len = len - half - 1;
+			}
+		}
+		return first;
 
+	}
 
-
+	/********************[ binary_search ]***********************************/
+	/********************[Algorithm Time Complexity: O(logN)]************/
+	// 二分查找，查找到元素等于val返回true， 未查找到返回false
+	template<class ForwardIterator, class T>
+	bool binary_search(ForwardIterator first, ForwardIterator last, const T& val)
+	{
+		if (first == last) return false;
+		while (first != last)
+		{
+			mid = first + (last - first) / 2;
+			if (*mid < val)
+			{
+				first = mid;
+				++first;
+			}
+			else if (val < *mid)
+			{
+				last = mid;
+			}
+			else
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 
 
 
