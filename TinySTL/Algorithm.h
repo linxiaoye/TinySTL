@@ -187,6 +187,25 @@ namespace TinySTL
 		return result;
 	}
 
+	/********************[ copy_backward ]***********************************/
+	/********************[Algorithm Time Complexity: O(n)]************/
+	/*
+		将[first, last)逆序复制到以[ xxx, result), result - 1 为起点的容器中
+	*/
+	template<class BidirectionIterator>
+	BidirectionIterator copy_backward(BidirectionIterator first, BidirectionIterator last, BidirectionIterator result)
+	{
+		if (first == last) return result;
+		BidirectionIterator iter = last - 1;
+		for (; iter != first; --iter)
+		{
+			*--result = *iter;
+		}
+		*--result = *iter;   // 此时， *iter == *first
+		return result;
+	}
+
+
 
 	/****************************************************************************************[heap相关]****************************************/
 	/********************[ down_heap ]***********************************/
@@ -689,7 +708,167 @@ namespace TinySTL
 		return false;
 	}
 
+	/********************[ random_shuffle ]***********************************/
+	/********************[Algorithm Time Complexity: O(N)]************/
+	// 将序列中的元素重新随机排列
+	template<class RandomIterator>
+	inline void random_shuffle(RandomIterator first, RandomIterator last)
+	{
+		if (first == last)  return;
+		int l = last - first;
+		for (RandomIterator i = first + 1; i != last; ++i)
+		{
+			iter_swap(i, first + rand() % ((i - first) + 1));
+		}
+	}
 
+	/************************************************************* sort相关 ************************************************************************/
+
+	/*****************************[ insert_sort ]**************************************/ 
+	/*****************************[Algorithm Time Complexity: O(N^2)]**************************************/
+	// STLsort函数中内部使用函数，当数据量较小时，使用插入排序可以避免快排的递归调用带来的过大的负荷
+	template<class RandomIterator>
+	void _insert_sort(RandomIterator first, RandomIterator last)
+	{
+		for (first == last) return;
+
+		for (RandomIterator iter = first + 1; iter != last; ++iter)
+		{
+			iterator_traits<RandomIterator>::value_type value = *iter;
+			if (value < *first)
+				copy_backward(first, iter, iter + 1);
+			else
+			{       // 到这里，说明value 一定比 *first 小，也就是一定不会越界
+				RandomIterator next = iter;
+				--next;
+				while (value < *next)
+				{
+					*(next + 1) = *next;
+					--next;
+				}
+				*(next + 1) = value;
+			}
+		}
+	}
+	
+	/*****************************[ qucik_sort ]**************************************/
+	/*****************************[Algorithm Time Complexity: O(NlogN)]**************************************/
+	// 当数据量很大且数据随机的时候，快排是最快的
+	/* 内部函数， 三点中值 first， last， middle 取中值 */
+	template<class T>
+	inline const T& _median(const T& a, const T& b, const T& c)
+	{
+		if (a < b)
+		{
+			if (b < c)
+				return b;
+			else
+			{
+				if (c < a)
+					return a;
+				else
+					return c;
+			}
+		}
+		else
+		{
+			if (c < b)
+				return b;
+			else
+			{
+				if (a < c)
+					return a;
+				else
+					return c;
+			}
+		}
+	}
+	/* 分割函数， 以pivot为轴， 交换左边大于pivot，右边小于pivot的元素*/
+	/* 返回first， first左边的元素都小于pivot */
+	template<class RandomIterator, class T>
+	RandomIterator _partial_quick_sort(RandomIterator first, RandomIterator last, T pivot)
+	{
+		while (1)
+		{
+			while (*first < pivot)
+				++first;
+			--last;
+			while (pivot < *last)
+				--last;
+			if (last < first) return first;
+			iter_swap(first, last);
+			++first;
+		}
+	}
+
+	template<class RandomIterator>
+	inline void _quick_sort(RandomIterator first, RandomIterator last)
+	{
+		if (last - first <= 1) return;
+		RandomIterator cut = _partial_quick_sort(first, last, _median(*first, *(last - 1), *(first + (last - first) / 2)));
+		_quick_sort(first, cut);
+		_quick_sort(cut, last);
+	}
+
+#define _tinystl_threshold 16
+
+	template<class RandomIterator>
+	inline void sort(RandomIterator first, RandomIterator last)
+	{
+		if (first == last) return;
+		if (last - first < _tinystl_threshold)
+			_insert_sort(first, last);
+		else
+			_quick_sort(first, last);
+	}
+
+
+	/************************************************************* sort相关 ************************************************************************/
+
+	/*****************************[ advance ]**************************************/
+	/*****************************[Algorithm Time Complexity: O(N)]**************************************/
+	template<class ForwardIterator>
+	inline void advance(ForwardIterator iter, size_t n)
+	{
+		while (n > 0)
+		{
+			++iter;
+		}
+	}
+
+	/*****************************[ equal_range ]**************************************/
+	/*****************************[Algorithm Time Complexity: O(logN)]**************************************/
+	template<class ForwardIterator, class T>
+	pair<ForwardIterator, ForwardIterator> equal_range(ForwardIterator first, ForwardIterator last, const T& val)
+	{
+		int len = last - first;
+		int half;
+		ForwardIterator left, mid, right;
+
+		while (len > 0)
+		{
+			half = len >> 1;
+			mid = first;
+			advance(mid, half);
+			if (*mid < val)
+			{
+				first = mid + 1;
+				half = len - half - 1;
+			}
+			else if (val < *mid)
+			{
+				len = half;
+			}
+			else  //  val == *mid
+			{
+				left = lower_bound(first, mid, val);
+				advance(first, len);
+				right = upper_bound(++mid, first, val);
+				return pair<ForwardIterator, ForwardIterator>(left, right);
+			}
+		}
+		return pair<ForwardIterator, ForwardIterator>(first, first);
+	}
 
 
 
