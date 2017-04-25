@@ -141,13 +141,6 @@ namespace TinySTL
 		return cmp(x, y) ? x : y;
 	}
 
-	/********************[ less ]***********************************/
-	/********************[Algorithm Time Complexity: O(1)]************/	
-	template<class T>
-	bool less(const T& lhs, const T& rhs)
-	{
-		return lhs < rhs;
-	}
 
 	/********************[ mismatch ]***********************************/
 	/********************[Algorithm Time Complexity: O(N)]************/
@@ -583,7 +576,7 @@ namespace TinySTL
 		返回第一次出现的点的末尾元素后一位置
 	*/
 	template<class ForwardIterator1, class ForwardIterator2>
-	InputIterator1 search(ForwardIterator1 first1, ForwardIterator1 last1, ForwardIterator2 first2, ForwardIterator2 last2)
+	ForwardIterator1 search(ForwardIterator1 first1, ForwardIterator1 last1, ForwardIterator2 first2, ForwardIterator2 last2)
 	{
 		int d1 = last1 - first1;
 		int d2 = last2 - first2; 
