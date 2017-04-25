@@ -141,17 +141,17 @@ namespace TinySTL
 	};
 
 	// 取第一个
-	template<class T1, class T2>
-	struct select1st : public binary_function<T1, T1, T1>
+	template<class pair>
+	struct select1st : public unary_function<pair, typename pair::first_type>
 	{
-		const T1& operator () (const pair<T1, T2>& x) const { return x.first; }
+		const typename pair::first_type& operator () (const pair& x) const { return x.first; }
 	};
 
 	// 取第二个
-	template<class T1, class T2>
-	struct select2st : public binary_function<T1, T2, T2>
+	template<class pair>
+	struct select2st : public unary_function<pair, typename pair::second_type>
 	{
-		const T2& operator () (const pair<T1, T2>& x) const { return x.second; }
+		const typename pair::second_type& operator () (const pair& x) const { return x.second; }
 	};
 
 	//
