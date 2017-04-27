@@ -27,9 +27,9 @@ namespace TinySTL
 	{
 		char* c = data_allocator::allocate(n * strlen(s));
 		_start = c;
-		for (int i = 0; i < n; ++i)
+		for (size_type i = 0; i < n; ++i)
 		{
-			for (int j = 0; j < strlen(s); ++j)
+			for (size_type j = 0; j < strlen(s); ++j)
 			{
 				*(c + i * strlen(s) + j) = *(s + j);
 			}
@@ -51,12 +51,12 @@ namespace TinySTL
 	template<class InputIterator>
 	string::string(InputIterator first, InputIterator last)
 	{
-		string_aux(first, last, typename std::is_integral<InpurIterator>::type());
+		string_aux(first, last, typename std::is_integral<InputIterator>::type());
 	}
 	template<class InputIterator>
 	void string::string_aux(InputIterator first, InputIterator last, std::true_type)
 	{
-		string(size_type(first), char(last);
+		string(size_type(first), char(last));
 	}
 	template<class InputIterator>
 	void string::string_aux(InputIterator first, InputIterator last, std::false_type)
@@ -91,7 +91,7 @@ namespace TinySTL
 		if (capacity() < strlen(s))
 			resize(strlen(s));
 		char* tmp = _start;
-		for (int i = 0; i < strlen(s); ++i)
+		for (size_type i = 0; i < strlen(s); ++i)
 		{
 			*tmp = *(s + i);
 			++tmp;
@@ -105,6 +105,7 @@ namespace TinySTL
 			resize(sizeof(c));
 		*_start = c;
 		_finish = _start + 1;
+		return *this;
 	}
 
 	string& string::operator+=(const string& str)
@@ -112,7 +113,7 @@ namespace TinySTL
 		if (capacity() - size() < str.size())
 			resize(size() + str.size());
 		char* tmp = _finish;
-		for (int i = 0; i < str.size(); ++i)
+		for (size_type i = 0; i < str.size(); ++i)
 		{
 			*tmp = *(str.begin() + i);
 			++tmp;
@@ -126,7 +127,7 @@ namespace TinySTL
 		if (capacity() - size() < strlen(s))
 			resize(size() + strlen(s));
 		char* tmp = _finish;
-		for (int i = 0; i < strlen(s); ++i)
+		for (size_type i = 0; i < strlen(s); ++i)
 		{
 			*tmp = *(s + i);
 			++tmp;
@@ -237,12 +238,16 @@ namespace TinySTL
 
 	typename string::iterator string::erase(iterator pos)
 	{
-		erase(pos - begin(), 1);
+		size_type len = pos - _start;
+		erase(len, 1);
+		return begin() + len;
 	}
 
 	typename string::iterator string::erase(iterator first, iterator last)
 	{
+		size_t len = first - _start;
 		erase(first - begin(), last - first);
+		return begin() + len;
 	}
 
 	void string::swap(string& str)
@@ -301,6 +306,194 @@ namespace TinySTL
 		}
 	}
 
+	std::ostream& operator << (std::ostream& os, const string& str)
+	{
+		for (auto c : str)
+			os << c;
+
+		return os;
+	}
+
+	std::istream& operator >> (std::istream& is, string& str)
+	{
+		char ch;
+		string::size_type old_size = str.size(), index = 0;
+		bool has_prev_black = false;
+		while (is.get(ch))    // 跳过前面的空格和换行
+		{
+			if (ch == ' ' || ch == '\n')
+				has_prev_black = true;
+			else
+				break;
+		}
+		is.putback(ch);
+		str.clear();
+		while (is.get(ch))
+		{
+			if (ch != EOF && ch != ' ' && ch != '\n')
+				str.push_back(ch);
+			else
+				break;
+		}
+		return is;
+	}
+
+	std::istream& getline(std::istream& is, string& str)
+	{
+		return getline(is, str, '\n');
+	}
+	std::istream& getline(std::istream& is, string& str, char d)
+	{
+		char c;
+		while (is.get(c))
+		{
+			if (c != d)
+				str.push_back(c);
+			else
+				break;
+		}
+		return is;
+	}
+	string operator+ (const string& lhs, const string& rhs)
+	{
+		string tmp(lhs);
+		tmp.operator+=(rhs);
+		return tmp;
+	}
+	string operator+ (const string& lhs, const char* rhs)
+	{
+		string tmp(lhs);
+		tmp.operator+=(rhs);
+		return tmp;
+	}
+	string operator+ (const char* lhs, const string& rhs)
+	{
+		string tmp(lhs);
+		tmp.operator+=(rhs);
+		return tmp;
+	}
+	string operator+ (const string& lhs, char rhs)
+	{
+		string tmp(lhs);
+		tmp.operator+=(rhs);
+		return tmp;
+	}
+	string operator+ (char lhs, const string& rhs)
+	{
+		string tmp(1, lhs);
+		tmp.operator+=(rhs);
+		return tmp;
+	}
+	bool operator== (const string& lhs, const string& rhs)
+	{
+		if (lhs.size() != rhs.size())
+			return false;
+		for (size_t i = 0; i < lhs.size(); ++i)
+		{
+			if (*(lhs.begin() + i) != *(rhs.begin() + i))
+				return false;
+		}
+		return true;
+	}
+	bool operator== (const string& lhs, const char* rhs)
+	{
+		string tmp(rhs);
+		return lhs == tmp;
+	}
+	bool operator== (const char* lhs, const string& rhs)
+	{
+		string tmp(lhs);
+		return tmp == rhs;
+	}
+	bool operator!= (const string& lhs, const string& rhs)
+	{
+		return !(lhs == rhs);
+	}
+	bool operator!= (const string& lhs, const char* rhs)
+	{
+		string tmp(rhs);
+		return !(lhs == tmp);
+	}
+	bool operator!= (const char* lhs, const string& rhs)
+	{
+		string tmp(lhs);
+		return !(tmp == rhs);
+	}
+	bool operator< (const string& lhs, const string& rhs)
+	{
+		string::const_iterator iter1 = lhs.begin(), iter2 = rhs.begin();
+		for (; iter1 != lhs.end() && iter2 != rhs.end(); ++iter1, ++iter2)
+		{
+			if (*iter2 < *iter1)
+				return false;
+			if (*iter1 < *iter2)
+				return true;
+		}
+		if (iter1 == lhs.end() && iter2 != rhs.end())
+			return true;
+		else
+			return false;
+	}
+	bool operator< (const string& lhs, const char* rhs)
+	{
+		string tmp(rhs);
+		return lhs < tmp;
+	}
+	bool operator< (const char* lhs, const string& rhs)
+	{
+		string tmp(lhs);
+		return tmp < rhs;
+	}
+	bool operator<= (const string& lhs, const string& rhs)
+	{
+		string::const_iterator iter1 = lhs.begin(), iter2 = rhs.begin();
+		for (; iter1 != lhs.end() && iter2 != rhs.end(); ++iter1, ++iter2)
+		{
+			if (*iter2 < *iter1)
+				return false;
+			if (*iter1 < *iter2)
+				return true;
+		}
+		if ((iter1 == lhs.end() && iter2 != rhs.end()) || (iter1 == lhs.end() && iter2 == rhs.end()))
+			return true;
+		else
+			return false;
+	}
+	bool operator<= (const string& lhs, const char* rhs)
+	{
+		string tmp(rhs);
+		return lhs <= tmp;
+	}
+	bool operator<= (const char* lhs, const string& rhs)
+	{
+		string tmp(lhs);
+		return tmp <= rhs;
+	}
+	bool operator> (const string& lhs, const string& rhs)
+	{
+		return !(lhs <= rhs);
+	}
+	bool operator> (const string& lhs, const char* rhs)
+	{
+		return !(lhs <= rhs);
+	}
+	bool operator> (const char* lhs, const string& rhs)
+	{
+		return !(lhs <= rhs);
+	}
+	bool operator>= (const string& lhs, const string& rhs)
+	{
+		return !(lhs < rhs);
+	}
+	bool operator>= (const string& lhs, const char* rhs)
+	{
+		return !(lhs < rhs);
+	}
+	bool operator>= (const char* lhs, const string& rhs)
+	{
+		return !(lhs < rhs);
+	}
+
 	void string::shink_to_fit()
 	{
 		data_allocator::deallocate(_start + size(), capacity() - size());
@@ -320,7 +513,7 @@ namespace TinySTL
 		size_type len = last - first;
 		char* c = data_allocator::allocate(len);
 		_start = c;
-		for (iterator i = first; i != last; ++i)
+		for (auto i = first; i != last; ++i)
 		{
 			*c = *i;
 			++c;
