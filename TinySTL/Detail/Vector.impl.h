@@ -51,7 +51,7 @@ namespace TinySTL {
 	{
 		_start = v._start;
 		_finish = v._finish;
-		_end_of_storage = v._storage;	
+		_end_of_storage = v._end_of_storage;
 		v._start = v._finish = v._end_of_storage = 0;
 	}	
 	
@@ -213,13 +213,13 @@ namespace TinySTL {
 					{
 						*new_finish = *iter;
 					}
-					uninitialized_fill_n(pos, n, val);
+					TinySTL::uninitialized_fill_n(pos, n, val);
 					_finish = _finish + n;
 				}
 				else
 				{
-					uninitialized_copy(pos, end(), pos + n);
-					uninitialized_fill_n(pos, n , val);
+					TinySTL::uninitialized_copy(pos, end(), pos + n);
+					TinySTL::uninitialized_fill_n(pos, n , val);
 					_finish = _finish + n;
 				} 
 			}
@@ -228,10 +228,10 @@ namespace TinySTL {
 				size_type old_size = size();
 				size_type new_capacity = (n > capacity()) ? n : get_new_capacity();
 				T* new_start = dataAllocator::allocate(new_capacity);
-				uninitialized_copy(begin(), pos, new_start);
+				TinySTL::uninitialized_copy(begin(), pos, new_start);
 				auto new_pos = new_start + (pos - begin());
-				uninitialized_fill_n(new_pos, n, val);
-				uninitialized_copy(pos, end(), new_pos + n);
+				TinySTL::uninitialized_fill_n(new_pos, n, val);
+				TinySTL::uninitialized_copy(pos, end(), new_pos + n);
 				destroy_and_deallocate_all();
 				_start = new_start;
 				_finish = _start + old_size + n;
@@ -257,16 +257,16 @@ namespace TinySTL {
 	void vector<T, Alloc>::insert_aux(iterator pos, InputIterator first, InputIterator last, std::false_type)
 	{
 		/*  默认first和pos指的不是同一个vector，否则会出错  */
-		auto len_insert = last - first;
-		auto len_left = capacity() - size();
+		size_type len_insert = last - first;
+		size_type len_left = capacity() - size();
 		if (len_insert <= len_left) 
 		{
-			auto elem_after = end() - pos;
+			size_type elem_after = end() - pos;
 			if (len_insert < elem_after)
 			{
 				auto new_finish = _finish + len_insert;
 				auto iter = end();
-				for (int i = 0; i < elem_after; --iter, --new_finish)
+				for (size_type i = 0; i < elem_after; --iter, --new_finish)
 				{
 					*new_finish = *iter;
 				}
@@ -284,7 +284,7 @@ namespace TinySTL {
 		{
 			size_type old_size = size();
 			size_type new_capacity = (len_insert > capacity()) ? len_insert : get_new_capacity();
-			auto new_start = dataAllocator(new_capacity);
+			auto new_start = dataAllocator::allocate(new_capacity);
 			uninitialized_copy(begin(), pos, new_start);
 			auto new_pos = new_start + (pos - begin());
 			uninitialized_copy(first, last, new_pos);
@@ -308,7 +308,8 @@ namespace TinySTL {
 			{
 				*first = *last;
 			}
-			destroy(end() - len_erase, end());
+			for (auto iter = end() - len_erase; iter != end(); ++iter)
+				destroy(iter);
 			_finish = _finish - len_erase;
 			return ret;
 		}
@@ -333,7 +334,7 @@ namespace TinySTL {
 	template<class T, class Alloc>
 	void vector<T, Alloc>::pop_back()
 	{
-		erase(end());
+		erase(end() - 1);
 	}
 	
 	template<class T, class Alloc>
@@ -348,9 +349,9 @@ namespace TinySTL {
 	{
 		if (this != &v)
 		{
-			swap(_start, v._start);
-			swap(_finish, v._finish);
-			swap(_end_of_storage, v._end_of_storage);
+			TinySTL::swap(_start, v._start);
+			TinySTL::swap(_finish, v._finish);
+			TinySTL::swap(_end_of_storage, v._end_of_storage);
 		}
 	}
 
