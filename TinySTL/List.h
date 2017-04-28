@@ -68,9 +68,6 @@ namespace TinySTL
 			T& operator * () { return (*p).data;}
 			T* operator -> () { return &(operator*()); }  // 标准做法 
 			
-
-			friend bool operator== <T> (const list_iterator<T>& lhs, const list_iterator<T>& rhs);
-			friend bool operator!= <T> (const list_iterator<T>& lhs, const list_iterator<T>& rhs);
 	
 	};  // end of class list_iteraetor
 	
@@ -172,6 +169,7 @@ namespace TinySTL
 		void delete_node(node_ptr ptr);
 		const_iterator iterator_to_const_iterator(iterator it);
 		void transfer(iterator pos, iterator first, iterator last);
+		void init();
 		
 	};   // end of class list
 	

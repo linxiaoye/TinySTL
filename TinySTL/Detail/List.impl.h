@@ -48,18 +48,23 @@ namespace TinySTL
 	/*********************[class list]*******************************/	
 	
 	/******构造、复制、析构等函数*******/
-	
+	template<class T>
+	void list<T>::init()
+	{
+		head = new_node();
+		tail = new_node();
+		head->next = tail;
+		tail->prev = head;
+	}
 	template<class T>
 	list<T>::list()
 	{
-		head = new_node();
-		tail = head;
+		init();
 	}
 	template<class T>
 	list<T>::list(size_type n, const value_type& val)
 	{
-		head = new_node();
-		tail = head;
+		init();
 		while (n--)
 			push_back(val);
 	}
@@ -73,24 +78,21 @@ namespace TinySTL
 	template<class InputIterator>   // 若不是数字 
 	void list<T>::ctor_aux(InputIterator first, InputIterator last, std::false_type)
 	{
-		head = new_node();
-		tail = head;
+		init();
 		insert(list_iterator<T>(tail), first, last);    
 	}
 	template<class T>
 	template<class InputIterator>   // 若是数字 
 	void list<T>::ctor_aux(InputIterator first, InputIterator last, std::true_type)
 	{
-		head = new_node();
-		tail = head;
+		init();
 		while (first--)
 			push_back(last);		
 	}
 	template<class T>
 	list<T>::list(const list& l)
 	{
-		head = new_node();
-		tail = head;
+		init();
 		insert(end(), l.begin(), l.end());
 	}
 	template<class T>
@@ -98,8 +100,7 @@ namespace TinySTL
 	{
 		if (*this == rhs) return *this;
 		clear();
-		head = new_node();
-		tail = head;
+		init();
 		insert(end(), rhs.begin(), rhs.end());
 		return *this;	
 	}	
@@ -107,7 +108,10 @@ namespace TinySTL
 	list<T>::~list()
 	{
 		clear(); 
-		head = tail = nullptr;  //clear之后 head = tail 仍指向最后的那一个节点
+		head->next = tail;  
+		head->prev = nullptr;
+		tail->prev = head;
+		tail->next = nullptr;
 	}
 
 	/*******************************/
@@ -138,7 +142,7 @@ namespace TinySTL
 	template<class T>
 	typename list<T>::iterator list<T>::begin()
 	{
-		return list_iterator<T>(head); 
+		return list_iterator<T>(head->next); 
 	}
 	template<class T>
 	typename list<T>::iterator list<T>::end()
@@ -149,13 +153,13 @@ namespace TinySTL
 	typename list<T>::const_iterator list<T>::begin() const 
 	{
 		auto tmp = (const list*)this;	
-		return iterator_to_const_iterator(iterator(tmp->head));
+		return iterator_to_const_iterator(iterator(tmp->head->next));
 	}
 	template<class T>
-	typename list<T>::const_iterator cbegin() const
+	typename list<T>::const_iterator list<T>::cbegin() const
 	{
 		auto tmp = (const list*)this;
-		return iterator_to_const_iterator(iterator(tmp->head));
+		return iterator_to_const_iterator(iterator(tmp->head->next));
 	}
 	template<class T>
 	typename list<T>::const_iterator list<T>::end() const
@@ -174,8 +178,9 @@ namespace TinySTL
 	typename list<T>::size_type list<T>::size()
 	{
 		size_type ret = 0;
-		if (head == tail)  return ret;
+		if (head->next == tail)  return ret;
 		node_ptr tmp = head;
+		tmp = tmp->next;
 		while(tmp != tail)
 		{
 			++ret;
@@ -189,18 +194,39 @@ namespace TinySTL
 	{
 		erase(list_iterator<T>(head), list_iterator<T>(tail));
 		head->prev = tail->next = nullptr;
-		head->next = tail->prev = head;
+		head->next = tail;
+		tail->prev = head;
 	}
 	
 	template<class T>
 	auto list<T>::insert(iterator pos, const value_type& val) -> iterator
 	{
 		node_ptr tmp = new_node(val);
-		tmp->prev = pos.p->prev;
-		tmp->next = pos.p;
-		pos.p->prev->next = tmp;
-		pos.p->prev = tmp;
-		return list_iterator<T>(tmp);
+
+		if (pos.p == head->next)
+		{
+			head->next = tmp;
+			tmp->prev = head;
+			pos.p->prev = tmp;
+			tmp->next = pos.p;
+			return list_iterator<T>(tmp);
+		}
+		else if (pos.p == tail)
+		{
+			tmp->next = tail;
+			tmp->prev = tail->prev;
+			tail->prev->next = tmp;
+			tail->prev = tail;
+			return list_iterator<T>(tmp);
+		}
+		else
+		{
+			tmp->prev = pos.p->prev;
+			tmp->next = pos.p;
+			pos.p->prev->next = tmp;
+			pos.p->prev = tmp;
+			return list_iterator<T>(tmp);
+		}
 	}
 	template<class T>
 	void list<T>::insert(iterator pos, size_type n, const value_type& val)
@@ -238,11 +264,12 @@ namespace TinySTL
 	template<class T>
 	auto list<T>::erase(iterator pos) -> iterator
 	{
-		if (pos = begin())
+		if (pos == begin())
 		{
 			node_ptr tmp = pos.p->next;
-			tmp->prev = nullptr;
-			delete_node(pos);
+			tmp->prev = head;
+			head->next = tmp;
+			delete_node(pos.p);
 			return list_iterator<T>(tmp);
 		}
 		iterator ret = list_iterator<T>(pos.p->next);
@@ -386,7 +413,7 @@ namespace TinySTL
 	template<class Compare>
 	void list<T>::sort(Compare comp)
 	{
-		if (head == tail || head->next == tail)  return ;
+		if (head->next == tail || head->next->next == tail)  return ;
 		list carry;
 		list counter[64];
 		int fill = 0;
@@ -410,7 +437,7 @@ namespace TinySTL
 	template<class T>   // 实现思路，遍历list，将元素插入begin()的位置 
 	void list<T>::reserve()    // 注意：必须用begin()，因为head是在不断变化的 
 	{                          // 所以要调用begin()来刷新迭代器 
-		if (head == tail || head->next == tail) return ; 
+		if (head->next == tail || head->next->next == tail) return ; 
 		auto iter1 = begin(), iter2 = end();
 		iter1++;
 		while (iter1 != iter2)
