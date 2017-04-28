@@ -100,7 +100,7 @@ namespace TinySTL
 	template<class ForwardIterator, class size, class T>
 	ForwardIterator _uninitialized_fill_n_aux(ForwardIterator first, size n, const T& x, _false_type) 
 	{
-		ForwardIterator ret;
+		ForwardIterator ret = first;
 		for ( ; n > 0; --n, ++ret) 
 			construct(&*ret, x);
 		return ret;
