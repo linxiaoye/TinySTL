@@ -27,8 +27,8 @@ namespace TinySTL
 		{
 			if (*first1 != *first2)
 				return false;
-			return true;
 		}
+		return true;
 	}
 	template<class InputIterator1, class InputIterator2, class BinaryPredicate>
 	inline bool equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, BinaryPredicate eq)
@@ -37,8 +37,9 @@ namespace TinySTL
 		{
 			if (!eq(*first1, *first2))
 				return false;
-			return true;
+
 		}
+		return true;
 	}
 
 	/********************[ fill ]***********************************/
@@ -210,13 +211,13 @@ namespace TinySTL
 		{
 			size_t index = first - head;
 			size_t right_child_index = 2 * index + 2;
-			while (right_child_index < (last - head))  // 执行下朔操作，必定是在被pop了一个最大值时，即顶部为空
+			while (right_child_index < (size_t)(last - head))  // 执行下朔操作，必定是在被pop了一个最大值时，即顶部为空
 			{
 				if (*(head + right_child_index) < *(head + right_child_index - 1))
 				{
 					--right_child_index;
 				}
-				if (*(head + index > *(head + right_child_index)))  break;
+				if (*(head + right_child_index) < *(head + index))  break;
 				*(head + index) = *(head + right_child_index);
 				index = right_child_index;
 				right_child_index = 2 * index + 2;
@@ -230,7 +231,7 @@ namespace TinySTL
 
 	/********************[ up_heap ]***********************************/
 	/********************[Algorithm Time Complexity: O(logN)]************/
-	template<class RandomIterator, class Compare>
+	template<class RandomIterator>
 	void up_heap(RandomIterator first, RandomIterator last, RandomIterator head)      // [first, last]
 	{                                                                                               
 		if (first != last)
@@ -274,9 +275,9 @@ namespace TinySTL
 	template<class RandomIterator>
 	void make_heap(RandomIterator first, RandomIterator last)  // [first, last)
 	{
-		auto index = last - first;
+		size_t index = last - first;
 		if (index < 2) return; // 如果长度为0或1，就不需要操作了
-		auto parent_index = (index - 2) / 2;
+		size_t parent_index = (index - 1) / 2;
 		while (parent_index)
 		{
 			down_heap(first + parent_index, last - 1, first);
@@ -292,7 +293,8 @@ namespace TinySTL
 		if (last - first < 2) return;
 		while (last - first > 1)
 		{
-			pop_heap(first, --last);
+			--last;
+			TinySTL::pop_heap(first, last);
 		}
 	}
 	/****************************************************************************************[heap相关]*************************************/
@@ -723,7 +725,7 @@ namespace TinySTL
 	template<class RandomIterator>
 	void _insert_sort(RandomIterator first, RandomIterator last)
 	{
-		for (first == last) return;
+		if (first == last) return;
 
 		for (RandomIterator iter = first + 1; iter != last; ++iter)
 		{
@@ -803,16 +805,12 @@ namespace TinySTL
 		_quick_sort(cut, last);
 	}
 
-#define _tinystl_threshold 16
 
 	template<class RandomIterator>
 	inline void sort(RandomIterator first, RandomIterator last)
 	{
 		if (first == last) return;
-		if (last - first < _tinystl_threshold)
-			_insert_sort(first, last);
-		else
-			_quick_sort(first, last);
+		_insert_sort(first, last);
 	}
 
 
