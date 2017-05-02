@@ -184,7 +184,7 @@ namespace TinySTL
 			test_min();
 			test_mismatch();
 			test_copy();
-			//test_heap();
+			test_heap();
 			test_count();
 			test_find();
 			test_for_each();
