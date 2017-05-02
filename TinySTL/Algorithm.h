@@ -81,7 +81,7 @@ namespace TinySTL
 	template<class ForwardIterator1, class ForwardIterator2>
 	void iter_swap(ForwardIterator1 iter1, ForwardIterator2 iter2)
 	{
-		iterator_traits<ForwardIterator1>::value_type tmp = *iter1;
+		typename iterator_traits<ForwardIterator1>::value_type tmp = *iter1;
 		*iter1 = *iter2;
 		*iter2 = tmp;
 	}
@@ -275,10 +275,10 @@ namespace TinySTL
 	template<class RandomIterator>
 	void make_heap(RandomIterator first, RandomIterator last)  // [first, last)
 	{
-		size_t index = last - first;
+		size_t index = last - first - 1;
 		if (index < 2) return; // 如果长度为0或1，就不需要操作了
 		size_t parent_index = (index - 1) / 2;
-		while (parent_index)
+		while (parent_index > 0)
 		{
 			down_heap(first + parent_index, last - 1, first);
 			--parent_index;
@@ -755,25 +755,25 @@ namespace TinySTL
 	{
 		if (a < b)
 		{
-			if (b < c)
+			if (b < c)                // a < b < c
 				return b;
 			else
 			{
-				if (c < a)
+				if (c < a)            // c < a < b
 					return a;
-				else
+				else                   // a <= c < b
 					return c;
 			}
 		}
-		else
+		else     // b <= a
 		{
-			if (c < b)
+			if (c < b)                 // c < b <= a
 				return b;
-			else
-			{
-				if (a < c)
+			else   // b <= c
+			{ 
+				if (a < c)            //  b <= a < c
 					return a;
-				else
+				else                 //  b <= c <= a
 					return c;
 			}
 		}
@@ -781,25 +781,29 @@ namespace TinySTL
 	/* 分割函数， 以pivot为轴， 交换左边大于pivot，右边小于pivot的元素*/
 	/* 返回first， first左边的元素都小于pivot */
 	template<class RandomIterator, class T>
-	RandomIterator _partial_quick_sort(RandomIterator first, RandomIterator last, T pivot)
+	RandomIterator _partial_quick_sort(RandomIterator first, RandomIterator last, T pivot)   // [first, last)
 	{
-		while (1)
+		while (first < last)
 		{
 			while (*first < pivot)
 				++first;
 			--last;
 			while (pivot < *last)
 				--last;
-			if (last < first) return first;
-			iter_swap(first, last);
+			if (first < last)
+				TinySTL::iter_swap(first, last);
+			else
+				return first;
 			++first;
 		}
+		return first;
 	}
 
 	template<class RandomIterator>
-	inline void _quick_sort(RandomIterator first, RandomIterator last)
+	void _quick_sort(RandomIterator first, RandomIterator last)
 	{
-		if (last - first <= 1) return;
+		if (last < first || first == last || first + 1 == last)
+			return;
 		RandomIterator cut = _partial_quick_sort(first, last, _median(*first, *(last - 1), *(first + (last - first) / 2)));
 		_quick_sort(first, cut);
 		_quick_sort(cut, last);
@@ -810,7 +814,10 @@ namespace TinySTL
 	inline void sort(RandomIterator first, RandomIterator last)
 	{
 		if (first == last) return;
-		_insert_sort(first, last);
+		else if (last - first < 16)
+			_insert_sort(first, last);
+		else
+			_quick_sort(first, last);
 	}
 
 
