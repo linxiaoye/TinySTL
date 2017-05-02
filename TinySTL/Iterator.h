@@ -21,7 +21,7 @@ namespace TinySTL {
 	struct iterator {
 		typedef Category    iterator_category;
 		typedef T           value_type;
-		typedef Distance    different_type;
+		typedef Distance    difference_type;
 		typedef T*          pointer;
 		typedef T&          reference;
 	};
@@ -73,7 +73,7 @@ namespace TinySTL {
 	struct iterator_traits {             /*  iterator_traits  */
 		typedef typename I::iterator_category   iterator_category;
 		typedef typename I::value_type          value_type;
-		typedef typename I::different_type      different_type;
+		typedef typename I::difference_type      difference_type;  
 		typedef typename I::pointer             pointer;
 		typedef typename I::reference           reference;
 	};
@@ -81,7 +81,7 @@ namespace TinySTL {
 	struct iterator_traits<T*> {
 		typedef random_access_iterator_tag  iterator_category;
 		typedef T                           value_type;
-		typedef ptrdiff_t                   different_type;
+		typedef ptrdiff_t                   difference_type;
 		typedef T*                          pointer;
 		typedef T&                          reference;
 	};
@@ -89,7 +89,7 @@ namespace TinySTL {
 	struct iterator_traits<const T*> {  /* 针对常量原始指针，为萃取出非const版本型别*/
 		typedef random_access_iterator_tag  iterator_category;
 		typedef T                           value_type;
-		typedef ptrdiff_t                   different_type;
+		typedef ptrdiff_t                   difference_type;
 		typedef T*                          pointer;
 		typedef T&                          reference;
 	};
@@ -105,8 +105,8 @@ namespace TinySTL {
 		return static_cast<typename iterator_traits<Iterator>::value_type*>(0);
 	}
 	template<class Iterator>
-	inline typename iterator_traits<Iterator>::different_type* different_type(const Iterator& It) {
-		return static_cast<typename iterator_traits<Iterator>::different_type*>(0);
+	inline typename iterator_traits<Iterator>::difference_type* difference_type(const Iterator& It) {
+		return static_cast<typename iterator_traits<Iterator>::difference_type*>(0);
 	}
 		
 }   //  namespace TinySTL
