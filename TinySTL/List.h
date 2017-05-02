@@ -98,7 +98,7 @@ namespace TinySTL
 		typedef T&                       reference;
 		typedef const T&                 const_reference;
 		typedef size_t                   size_type;
-		typedef ptrdiff_t                different_type;
+		typedef ptrdiff_t                difference_type;
 	private:
 		node_ptr head;
 		node_ptr tail;
