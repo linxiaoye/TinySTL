@@ -39,6 +39,7 @@ namespace TinySTL
 		typedef typename Sequence::size_type             size_type;
 		typedef typename Sequence::reference             reference;
 		typedef typename Sequence::const_reference       const_reference;
+		typedef typename Sequence::difference_type       difference_type;
 
 	private:
 		Sequence c;
