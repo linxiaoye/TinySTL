@@ -6,11 +6,14 @@
 #include <vector>
 #include <iostream>
 
+
 int main()
 {
 	TinySTL::VectorTest::testAllCases();
 	TinySTL::testAll_algorithm_Cases();
 	
+
+
 
 
 	system("pause");
