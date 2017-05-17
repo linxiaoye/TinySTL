@@ -116,7 +116,6 @@ namespace TinySTL
 
 	/*******************************/
 	
-	
 	template<class T>
 	void list<T>::push_back(const value_type& val)
 	{
@@ -150,28 +149,24 @@ namespace TinySTL
 		return list_iterator<T>(tail);
 	}
 	template<class T>
-	typename list<T>::const_iterator list<T>::begin() const 
+	typename list<T>::const_iterator list<T>::end() const
 	{
-		auto tmp = (const list*)this;	
-		return iterator_to_const_iterator(iterator(tmp->head->next));
+		return list_const_iterator<T>(tail);
+	}
+	template<class T>
+	typename list<T>::const_iterator list<T>::begin() const
+	{
+		return list_const_iterator<T>(head->next);
+	}
+	template<class T>
+	typename list<T>::const_iterator list<T>::cend() const
+	{
+		return list_const_iterator<T>(tail);
 	}
 	template<class T>
 	typename list<T>::const_iterator list<T>::cbegin() const
 	{
-		auto tmp = (const list*)this;
-		return iterator_to_const_iterator(iterator(tmp->head->next));
-	}
-	template<class T>
-	typename list<T>::const_iterator list<T>::end() const
-	{
-		auto tmp = (const list*)this;
-		return iterator_to_const_iterator(iterator(tmp->tail));
-	}
-	template<class T>
-	auto list<T>::cend() const -> const_iterator
-	{
-		auto tmp = (const list*)this;
-		return iterator_to_const_iterator(iterator(tmp->tail));
+		return list_const_iterator<T>(head->next);
 	}
 	
 	template<class T>
@@ -192,7 +187,7 @@ namespace TinySTL
 	template<class T>
 	void list<T>::clear()
 	{
-		erase(list_iterator<T>(head), list_iterator<T>(tail));
+		erase(list_iterator<T>(head->next), list_iterator<T>(tail));
 		head->prev = tail->next = nullptr;
 		head->next = tail;
 		tail->prev = head;
@@ -216,7 +211,7 @@ namespace TinySTL
 			tmp->next = tail;
 			tmp->prev = tail->prev;
 			tail->prev->next = tmp;
-			tail->prev = tail;
+			tail->prev = tmp;
 			return list_iterator<T>(tmp);
 		}
 		else
@@ -448,32 +443,7 @@ namespace TinySTL
 	}
 	
 	/*********** friend functions *******************/
-	template<class T>
-	void swap(list<T>& lhs, list<T> rhs)
-	{
-		lhs.swap(rhs);
-	}
-	template<class T>
-	bool operator == (const list<T>& lhs, const list<T>& rhs)
-	{
-		if (lhs.head != rhs.head)  return false;
-		typename list<T>::node_ptr lhs_ptr = lhs.head;
-		typename list<T>::node_ptr rhs_ptr = rhs.head;
-		while (lhs_ptr != lhs.tail && rhs_ptr != rhs.tail)
-		{
-			lhs_ptr = lhs_ptr->next;
-			rhs_ptr = rhs_ptr->next;
-			if (lhs_ptr != rhs_ptr)  break;
-		}
-		if (lhs_ptr == lhs.tail && rhs == rhs.tail)
-			return true;
-		return false;
-	}
-	template<class T>
-	bool operator != (const list<T>& lhs, const list<T>& rhs)
-	{
-		return !(lhs == rhs);
-	}
+
 	
 	/******* tool functions *******/
 	template<class T>
@@ -489,14 +459,6 @@ namespace TinySTL
 		ptr->prev = ptr->next = nullptr;
 		node_allocator::destroy(ptr);
 		node_allocator::deallocate(ptr);
-	}
-	template<class T>
-	auto list<T>::iterator_to_const_iterator(iterator it) -> const_iterator
-	{
-		using nodeCP = node<const T> *;
-		auto tmp = (const list<const T>*)this;
-		node<const T> node(it.p->data, nodeCP(it.p->prev), nodeCP(it.p->next), tmp);
-		return const_iterator(&node);
 	}
 	template<class T>
 	void list<T>::transfer(iterator pos, iterator first, iterator last)

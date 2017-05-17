@@ -52,7 +52,6 @@ namespace TinySTL
 	struct list_iterator: public iterator<bidirectional_iterator_tag, T>
 	{
 		                                    // 表示只有参数同为T时，这个list才是对应list_iterator的友元类 
-		friend class list<T>;                 //  list 可以访问 list_iterator的所有成员 
 		
 		public:
 			typedef node<T>* node_ptr;
@@ -70,23 +69,47 @@ namespace TinySTL
 			
 	
 	};  // end of class list_iteraetor
+
+	/*********************[list_const_iterator class]*******************************/
+	template<class T>
+	struct list_const_iterator;
+	template<class T>
+	bool operator== (list_const_iterator<T>& lhs, list_const_iterator<T>& rhs) { return lhs.p == rhs.p; }
+	template<class T>
+	bool operator!= (list_const_iterator<T>& lhs, list_const_iterator<T>& rhs) { return !(lhs == rhs); }
+
+	template<class T>
+	struct list_const_iterator : public list_iterator<T>
+	{
+		// 表示只有参数同为T时，这个list才是对应list_iterator的友元类 
+		
+		explicit list_const_iterator(node_ptr ptr = nullptr) : list_iterator<T>::list_iterator(ptr) { }   // 不允许隐式转换 
+
+		inline list_const_iterator& operator ++ () { p = (node_ptr)(*p).next; return *this; }
+		inline list_const_iterator operator ++ (int) { node_ptr tmp = p; p = (node_ptr)(*p).next; return list_const_iterator(tmp); }
+		inline list_const_iterator& operator -- () { p = (node_ptr)(*p).prev; return *this; }
+		inline list_const_iterator operator -- (int) { node_ptr tmp = p; p = (node_ptr)(*p).prev; return list_const_iterator(tmp); }
+
+		const T& operator * () const { return (*p).data; }
+		const T* operator -> () const { return &(operator*()); }  // 标准做法 
+
+
+	};  // end of class list_iteraetor
+
+
 	
 	/*********************[class list]*******************************/
 	/***友元函数先声明***/
-	template<class T>
-	void swap(list<T>& lhs, list<T>& rhs);
-	template<class T>
-	bool operator == (const list<T>& lhs, const list<T>& rhs);
-	template<class T>
-	bool operator != (const list<T>& lhs, const list<T>& rhs);
+
 	
 	template<class T>
 	class list {
 	public:
 		friend struct list_iterator<T>;
-		friend void swap<T> (list<T>& lhs, list<T>& rhs);
-		friend bool operator == <T>(const list<T>& lhs, const list<T>& rhs);
-		friend bool operator != <T>(const list<T>& lhs, const list<T>& rhs);
+		friend struct list_const_iterator<T>;
+		friend void swap  (list<T>& lhs, list<T>& rhs);
+		friend bool operator == <T> (const list<T>& lhs, const list<T>& rhs);
+		friend bool operator != <T> (const list<T>& lhs, const list<T>& rhs);
 		
 	private:
 		typedef allocator<node<T>>   	 node_allocator;
@@ -94,7 +117,7 @@ namespace TinySTL
 	public:
 		typedef T                        value_type;
 		typedef list_iterator<T>         iterator;
-		typedef list_iterator<const T>   const_iterator;
+		typedef list_const_iterator<T>   const_iterator;
 		typedef T&                       reference;
 		typedef const T&                 const_reference;
 		typedef size_t                   size_type;
@@ -111,16 +134,16 @@ namespace TinySTL
 		list& operator = (const list& rhs);
 		~list();
 
-		bool empty() { return head == tail; }
+		bool empty() { return head->next == tail; }
 		size_type size();
-		reference front() { return head->data; }
+		reference front() { return head->next->data; }
 		reference back() { return tail->prev->data; }
 		
 		iterator begin();
 		iterator end();
 		const_iterator begin() const;
-		const_iterator cbegin() const;
 		const_iterator end() const;
+		const_iterator cbegin() const;
 		const_iterator cend() const;
 		
 		void push_back(const value_type& val);
@@ -167,13 +190,37 @@ namespace TinySTL
 		template<class InputIterator>
 		void insert_aux(iterator pos, InputIterator first, InputIterator last, std::true_type);		
 		void delete_node(node_ptr ptr);
-		const_iterator iterator_to_const_iterator(iterator it);
 		void transfer(iterator pos, iterator first, iterator last);
 		void init();
 		
 	};   // end of class list
 	
-	
+	template<class T>
+	void swap (list<T>& lhs, list<T> rhs)
+	{
+		lhs.swap(rhs);
+	}
+	template<class T>
+	bool operator == (const list<T>& lhs, const list<T>& rhs)
+	{
+		if (*lhs.begin() != *rhs.begin()) return false;
+		list<T>::const_iterator iter1 = lhs.begin();
+		list<T>::const_iterator iter2 = rhs.begin();
+		for (; iter1 != lhs.end() && iter2 != rhs.end(); ++iter1, ++iter2)
+		{
+			if (*iter1 != *iter2) return false;
+		}
+		if (iter1 == lhs.end() && iter2 == rhs.end()) return true;
+		else  return false;
+	}
+	template<class T>
+	bool operator != (const list<T>& lhs, const list<T>& rhs)
+	{
+		return !(lhs == rhs);
+	}
+
+
+
 }  // namespace TinySTL
 
 #include "./Detail/List.impl.h"
